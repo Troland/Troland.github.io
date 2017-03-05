@@ -72,6 +72,12 @@ deploy:
   repo: https://github.com/Troland/Troland.github.io.git
   branch: master
 
+# Backup
+backup:
+    type: git
+    repository:
+       github: git@github.com:Troland/Troland.github.io.git,master
+       
 feed:
   type: atom
   path: atom.xml
