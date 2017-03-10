@@ -140,8 +140,20 @@ console.log(year); // ReferenceError: year is not defined
 ```
 
 # Hoisting和let
+摘自这篇[文章](https://github.com/getify/You-Dont-Know-JS/issues/767#issuecomment-227946671):
+> From the code author's perspective, "declaring" is the var x part and "initializing" is the x = 2 part. But from the perspective of the spec/engine, these shift. "Declaring" is like registering a variable to a scope, "initializing" is reserving space/memory/binding for that variable so it can be used (and giving it its initial undefined value), and "assigning" is giving it a value explicitly in code.
+ 
 
-`let`会在块作用范围的顶部注册，但是当变量在声明前被访问会抛出错误：`ReferenceError: <variable> is not defined`.从变量声明语句到块作用范围的顶部，变量是在一个临时的死区并且不能够被访问.请看以下代码:
+> Declaring always happens at time of compilation, and its effect can be seen whenever a scope is first entered. Initializing for var happens at the beginning of the scope, whereas it happens at the site of the declarator for let and const. Initialization is what gives a value its initial undefined value. Assignment then is when you actually use = to assign something to it.
+
+大概意思是说:在代码的作者看来,`声明`就是var x部分而`初始化`是指的x=2.但是从es6文档来看,
+`声明`是指在作用范围内注册这个变量，`初始化`是指为变量保留空间/内存/绑定以便它可以被引用(并且赋值它初始值`undefined`),而`赋值`是指显式地在代码中赋值。
+
+声明永远发生在编译时，当进入作用域就只可以引用它。var变量的初始化发生在作用范围顶部，而let和const是在声明它们的地方。初始化就是赋值一个未定义的初始值。然后赋值是当你确实用`=`来赋值。
+
+换句话也就是说，当声明`let`和`const`的时候，在它们之前只是进行了变量的注册，而未初始化，所以在`let`和`const`之前引用变量会出现**变量引用错误**.
+
+`let`会在块作用范围的顶部注册，但是当变量在声明前被访问会抛出错误：`ReferenceError: <variable> is not defined`.从变量声明语句到块作用范围的顶部，变量是在一个临时的死区(Temporal Dead Zone, 简称TDZ)并且不能够被访问.请看以下代码:
 [打开jsbin](http://jsbin.com/jodegoy/edit?js,console)
 
 ```
