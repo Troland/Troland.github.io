@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2017-06-19T01:17:41.000Z</updated>
+  <updated>2017-07-10T15:40:41.000Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -14,6 +14,81 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Token-based-auth</title>
+    <link href="http://yoursite.com/2017/07/09/token-based-auth/"/>
+    <id>http://yoursite.com/2017/07/09/token-based-auth/</id>
+    <published>2017-07-09T15:25:00.000Z</published>
+    <updated>2017-07-10T15:40:41.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>现在前后端分离如火如荼，传统的基于<strong>cookie的认证</strong>也有诸多不便。就目前自己所知有如下限制：</p>
+<ul>
+<li><p>首先，按照传统的基于cookie的认证，基于cookie的认证即服务器通过保存于客户端中的<strong>sessionid</strong>标识符来识别用户, 服务器必须得维持一份认证的状态。那么为了持久化session即在当服务器宕机或者转移的情况下，可以保证当服务器恢复之后，客户端访问不需要再次登录。这样会增加服务器开销而如今的<em>API DESIGN</em>是围绕着api来进行设计的,<strong>restful设计</strong>,请允许我咬文嚼字一下，restful即无状态服务吧^-^.</p>
+</li>
+<li><p>第二，有的应用场景下并未支持cookie,这个时候的解决方案有:采用url重写，表单隐藏域。我没弄过url重写，表单隐藏域也没弄过，真抱歉。对了，在微信端的时候关于用户的识别，由于微信是没支持cookie的所以需要自己实现一下session,可以利用openid来作为唯一标识，因为openid是唯一的具体可以参见<a href="https://github.com/node-webot/wechat/blob/master/lib/session.js" target="_blank" rel="external">node-webot</a>的session实现。</p>
+</li>
+<li><p>第三, api服务器往往会部署在另一台服务器上面，这样会造成浏览器的跨域，所以这个时候的解决办法是服务器端需要进行跨域的设置。</p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">response.setHeader(&quot;Access-Control-Allow-Headers&quot;, &quot;X-Requested-With, accept, content-type, xxxx&quot;);</div><div class="line">response.setHeader(&quot;Access-Control-Allow-Methods&quot;, &quot;GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, PATCH&quot;);</div><div class="line">response.setHeader(&quot;Access-Control-Allow-Credentials&quot;, &quot;true&quot;);</div><div class="line">response.setHeader(&quot;Access-Control-Allow-Origin&quot;, &quot;http://127.0.0.1:8010&quot;);//这里必须指定地址而不能写成星号否则浏览器会提示不能为星号</div></pre></td></tr></table></figure>
+<p>然后前端的ajax请求库中必须设置<code>withCredentials</code>为<code>true</code>。然而基于token的认证并无跨域问题。</p>
+<p>那么基于token的认证用到的主要有以下插件:</p>
+<ul>
+<li><a href="https://www.npmjs.com/package/bcrypt" target="_blank" rel="external">bcrypt</a> 加盐哈希密码用，有效抵御彩虹攻击。</li>
+<li><a href="https://www.npmjs.com/package/jsonwebtoken" target="_blank" rel="external">jsonwebtoken</a> 用来生成符合<a href="https://tools.ietf.org/html/rfc7519" target="_blank" rel="external">JSON WEB Tokens</a>标准的令牌</li>
+<li><a href="https://www.npmjs.com/package/express-jwt" target="_blank" rel="external">express-jwt</a> 用来验证JsonWebTokens的中间件</li>
+<li><a href="https://www.npmjs.com/package/crypto-js" target="_blank" rel="external">crypto-js</a> 前后端密码加密<br>关于JsonWebToken可以参考这个<a href="https://jwt.io/" target="_blank" rel="external">网站</a>。</li>
+</ul>
+<p>项目是采用express-generator构建的。<code>npm i -g express-generator</code>即可。</p>
+<p>下面贴出主要的代码:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line">app.post(&apos;/login&apos;, function(req, res) &#123;</div><div class="line">  let userName = req.body.username</div><div class="line">  let password = entities.encode(req.body.password)</div><div class="line">  // find user</div><div class="line">  conn.query(&apos;SELECT * FROM user WHERE user_name = ?&apos;, [</div><div class="line">    userName</div><div class="line">  ], function (err, results, fields) &#123;</div><div class="line">    if (!err) &#123;</div><div class="line">      let user = results[0]</div><div class="line">      // validate password</div><div class="line">      bcrypt.compare(password, user.password, function (err, result) &#123;</div><div class="line">        console.log(user)</div><div class="line">        if (result) &#123;</div><div class="line">        // Dispatch token expired after 2mins for client</div><div class="line">          let token = jwt.sign(&#123; user_name: user.user_name &#125;, secret, &#123; expiresIn: 60 * 2 &#125;)</div><div class="line">          res.json(&#123;</div><div class="line">            code: &apos;0&apos;,</div><div class="line">            token: token</div><div class="line">          &#125;)</div><div class="line">        &#125; else &#123;</div><div class="line">          res.json(&#123;</div><div class="line">            code: &apos;1&apos;,</div><div class="line">            error: &apos;用户不存在&apos;</div><div class="line">          &#125;)</div><div class="line">        &#125;</div><div class="line">      &#125;)</div><div class="line">    &#125; else &#123;</div><div class="line">      res.json(&#123;</div><div class="line">        code: &apos;2&apos;,</div><div class="line">        error: &apos;用户不存在&apos;</div><div class="line">      &#125;)</div><div class="line">    &#125;</div><div class="line">  &#125;)</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<p>当用户登录的时候检测用户输入的用户名密码是否正确。如果正确则派发出token并在2分钟之后让其过期。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">// protected api</div><div class="line">app.all(&apos;/api/*&apos;, jwtVerify(&#123;secret: secret&#125;), function(err, req, res, next) &#123;</div><div class="line">  // 当令牌过期则返回401否则通过</div><div class="line">  if (err.name === &apos;UnauthorizedError&apos;) &#123;</div><div class="line">    res.status(401).send(&apos;Invalid token...&apos;)</div><div class="line">  &#125;</div><div class="line">  next()</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<p>然后再在所需要验证的api下使用中间件进行验证，当令牌过期则返回401。</p>
+<p>以上就是主要的代码了，那么这里的话可以看到，完全是无状态的即真正的restful(休息ful哈哈，就是无状态嘛），服务端无需专门维护登录的用户状态信息，也省去维护的开销。</p>
+<p>代码可见<a href="https://github.com/Troland/token-based-auth" target="_blank" rel="external">这里</a>。</p>
+<p>可是这样做，会不会有什么问题呢？</p>
+<p>Todolist:</p>
+<ul>
+<li style="list-style: none"><input type="checkbox"> 登录次数限制</li>
+<li style="list-style: none"><input type="checkbox"> 安全检测</li>
+<li style="list-style: none"><input type="checkbox"> 权限控制</li>
+</ul>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;现在前后端分离如火如荼，传统的基于&lt;strong&gt;cookie的认证&lt;/strong&gt;也有诸多不便。就目前自己所知有如下限制：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;首先，按照传统的基于cookie的认证，基于cookie的认证即服务器通过保存于客户端中的&lt;strong&gt;sess
+    
+    </summary>
+    
+      <category term="Backend" scheme="http://yoursite.com/categories/Backend/"/>
+    
+    
+      <category term="token" scheme="http://yoursite.com/tags/token/"/>
+    
+      <category term="jwt" scheme="http://yoursite.com/tags/jwt/"/>
+    
+      <category term="jsonwebtoken" scheme="http://yoursite.com/tags/jsonwebtoken/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>css组件库</title>
+    <link href="http://yoursite.com/2017/06/19/css%E7%BB%84%E4%BB%B6%E5%BA%93/"/>
+    <id>http://yoursite.com/2017/06/19/css组件库/</id>
+    <published>2017-06-19T03:19:03.000Z</published>
+    <updated>2017-06-19T03:19:03.000Z</updated>
+    
+    <summary type="html">
+    
+    </summary>
+    
+    
+  </entry>
   
   <entry>
     <title>常用CSS3详解</title>
@@ -55,7 +130,7 @@
     <link href="http://yoursite.com/2017/06/11/es6%E7%A2%8E%E7%A2%8E%E5%BF%B5/"/>
     <id>http://yoursite.com/2017/06/11/es6碎碎念/</id>
     <published>2017-06-10T16:20:25.000Z</published>
-    <updated>2017-06-18T12:30:37.000Z</updated>
+    <updated>2017-06-19T01:18:41.000Z</updated>
     
     <content type="html"><![CDATA[<p>最近开始学习和使用<em>ES6</em>了, 下面是自己的一些使用心得:</p>
 <h2 id="let与const"><a href="#let与const" class="headerlink" title="let与const"></a>let与const</h2><p>隐蔽死区</p>
