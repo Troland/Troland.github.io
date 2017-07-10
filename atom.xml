@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2017-07-10T15:40:41.000Z</updated>
+  <updated>2017-07-10T16:03:02.000Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://yoursite.com/2017/07/09/token-based-auth/"/>
     <id>http://yoursite.com/2017/07/09/token-based-auth/</id>
     <published>2017-07-09T15:25:00.000Z</published>
-    <updated>2017-07-10T15:40:41.000Z</updated>
+    <updated>2017-07-10T16:03:02.000Z</updated>
     
     <content type="html"><![CDATA[<p>现在前后端分离如火如荼，传统的基于<strong>cookie的认证</strong>也有诸多不便。就目前自己所知有如下限制：</p>
 <ul>
@@ -38,8 +38,9 @@
 <li><a href="https://www.npmjs.com/package/bcrypt" target="_blank" rel="external">bcrypt</a> 加盐哈希密码用，有效抵御彩虹攻击。</li>
 <li><a href="https://www.npmjs.com/package/jsonwebtoken" target="_blank" rel="external">jsonwebtoken</a> 用来生成符合<a href="https://tools.ietf.org/html/rfc7519" target="_blank" rel="external">JSON WEB Tokens</a>标准的令牌</li>
 <li><a href="https://www.npmjs.com/package/express-jwt" target="_blank" rel="external">express-jwt</a> 用来验证JsonWebTokens的中间件</li>
-<li><a href="https://www.npmjs.com/package/crypto-js" target="_blank" rel="external">crypto-js</a> 前后端密码加密<br>关于JsonWebToken可以参考这个<a href="https://jwt.io/" target="_blank" rel="external">网站</a>。</li>
+<li><a href="https://www.npmjs.com/package/crypto-js" target="_blank" rel="external">crypto-js</a> 前后端密码加密</li>
 </ul>
+<p>关于JsonWebToken可以参考这个<a href="https://jwt.io/" target="_blank" rel="external">网站</a>。</p>
 <p>项目是采用express-generator构建的。<code>npm i -g express-generator</code>即可。</p>
 <p>下面贴出主要的代码:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line">app.post(&apos;/login&apos;, function(req, res) &#123;</div><div class="line">  let userName = req.body.username</div><div class="line">  let password = entities.encode(req.body.password)</div><div class="line">  // find user</div><div class="line">  conn.query(&apos;SELECT * FROM user WHERE user_name = ?&apos;, [</div><div class="line">    userName</div><div class="line">  ], function (err, results, fields) &#123;</div><div class="line">    if (!err) &#123;</div><div class="line">      let user = results[0]</div><div class="line">      // validate password</div><div class="line">      bcrypt.compare(password, user.password, function (err, result) &#123;</div><div class="line">        console.log(user)</div><div class="line">        if (result) &#123;</div><div class="line">        // Dispatch token expired after 2mins for client</div><div class="line">          let token = jwt.sign(&#123; user_name: user.user_name &#125;, secret, &#123; expiresIn: 60 * 2 &#125;)</div><div class="line">          res.json(&#123;</div><div class="line">            code: &apos;0&apos;,</div><div class="line">            token: token</div><div class="line">          &#125;)</div><div class="line">        &#125; else &#123;</div><div class="line">          res.json(&#123;</div><div class="line">            code: &apos;1&apos;,</div><div class="line">            error: &apos;用户不存在&apos;</div><div class="line">          &#125;)</div><div class="line">        &#125;</div><div class="line">      &#125;)</div><div class="line">    &#125; else &#123;</div><div class="line">      res.json(&#123;</div><div class="line">        code: &apos;2&apos;,</div><div class="line">        error: &apos;用户不存在&apos;</div><div class="line">      &#125;)</div><div class="line">    &#125;</div><div class="line">  &#125;)</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
@@ -54,6 +55,7 @@
 <li style="list-style: none"><input type="checkbox"> 登录次数限制</li>
 <li style="list-style: none"><input type="checkbox"> 安全检测</li>
 <li style="list-style: none"><input type="checkbox"> 权限控制</li>
+<li style="list-style: none"><input type="checkbox"> 用户注册进行严格的密码字符的控制</li>
 </ul>
 ]]></content>
     
