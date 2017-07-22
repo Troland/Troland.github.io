@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2017-07-10T16:03:02.000Z</updated>
+  <updated>2017-07-21T01:21:16.000Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -16,11 +16,53 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>二维码登录</title>
+    <link href="http://yoursite.com/2017/07/21/%E4%BA%8C%E7%BB%B4%E7%A0%81%E7%99%BB%E5%BD%95/"/>
+    <id>http://yoursite.com/2017/07/21/二维码登录/</id>
+    <published>2017-07-21T01:21:16.000Z</published>
+    <updated>2017-07-21T01:21:16.000Z</updated>
+    
+    <summary type="html">
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Css疑难杂症</title>
+    <link href="http://yoursite.com/2017/07/12/Css%E7%96%91%E9%9A%BE%E6%9D%82%E7%97%87/"/>
+    <id>http://yoursite.com/2017/07/12/Css疑难杂症/</id>
+    <published>2017-07-12T15:33:20.000Z</published>
+    <updated>2017-07-12T15:35:38.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>input的line-height设置文字居中一般写的样式如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">.input &#123;</div><div class="line">  width: 100px;</div><div class="line">  line-height: 1.8;</div><div class="line">  font-size: 18px;</div><div class="line">  box-sizing: border-box;</div><div class="line">  padding: 5px;</div><div class="line">  border: 1px solid #f00;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这样输入文字居中。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;input的line-height设置文字居中一般写的样式如下:&lt;/p&gt;
+&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div cla
+    
+    </summary>
+    
+      <category term="Tech" scheme="http://yoursite.com/categories/Tech/"/>
+    
+      <category term="FrontEnd" scheme="http://yoursite.com/categories/Tech/FrontEnd/"/>
+    
+    
+      <category term="css" scheme="http://yoursite.com/tags/css/"/>
+    
+  </entry>
+  
+  <entry>
     <title>Token-based-auth</title>
     <link href="http://yoursite.com/2017/07/09/token-based-auth/"/>
     <id>http://yoursite.com/2017/07/09/token-based-auth/</id>
     <published>2017-07-09T15:25:00.000Z</published>
-    <updated>2017-07-10T16:03:02.000Z</updated>
+    <updated>2017-07-10T16:03:42.000Z</updated>
     
     <content type="html"><![CDATA[<p>现在前后端分离如火如荼，传统的基于<strong>cookie的认证</strong>也有诸多不便。就目前自己所知有如下限制：</p>
 <ul>
@@ -97,7 +139,7 @@
     <link href="http://yoursite.com/2017/06/18/%E5%B8%B8%E7%94%A8CSS3%E8%AF%A6%E8%A7%A3/"/>
     <id>http://yoursite.com/2017/06/18/常用CSS3详解/</id>
     <published>2017-06-18T15:24:15.000Z</published>
-    <updated>2017-06-19T01:17:41.000Z</updated>
+    <updated>2017-07-22T13:34:23.000Z</updated>
     
     <content type="html"><![CDATA[<p>最近在整理CSS3的属性的原理，特意分享一下个人的一些理解。</p>
 <h2 id="transform-origin"><a href="#transform-origin" class="headerlink" title="transform-origin"></a>transform-origin</h2><p><code>transform-origin</code>是改变一个元素的变形的原点通常是和<code>transform</code>一起使用。<br><a href="https://developer.mozilla.org/zh-CN/docs/Web/CSS/transform-origin" target="_blank" rel="external">transform-origin</a> MDN上说明:</p>
@@ -132,7 +174,7 @@
     <link href="http://yoursite.com/2017/06/11/es6%E7%A2%8E%E7%A2%8E%E5%BF%B5/"/>
     <id>http://yoursite.com/2017/06/11/es6碎碎念/</id>
     <published>2017-06-10T16:20:25.000Z</published>
-    <updated>2017-06-19T01:18:41.000Z</updated>
+    <updated>2017-07-22T13:34:23.000Z</updated>
     
     <content type="html"><![CDATA[<p>最近开始学习和使用<em>ES6</em>了, 下面是自己的一些使用心得:</p>
 <h2 id="let与const"><a href="#let与const" class="headerlink" title="let与const"></a>let与const</h2><p>隐蔽死区</p>
@@ -201,7 +243,7 @@
     <link href="http://yoursite.com/2017/06/09/nodeclub%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/"/>
     <id>http://yoursite.com/2017/06/09/nodeclub源码解析/</id>
     <published>2017-06-09T09:59:02.000Z</published>
-    <updated>2017-06-09T09:59:02.000Z</updated>
+    <updated>2017-07-22T13:34:23.000Z</updated>
     
     <summary type="html">
     
@@ -215,7 +257,7 @@
     <link href="http://yoursite.com/2017/06/08/Nodejs%E7%A2%8E%E7%A2%8E%E5%BF%B5/"/>
     <id>http://yoursite.com/2017/06/08/Nodejs碎碎念/</id>
     <published>2017-06-08T14:21:01.000Z</published>
-    <updated>2017-06-08T14:21:01.000Z</updated>
+    <updated>2017-07-22T13:34:23.000Z</updated>
     
     <summary type="html">
     
@@ -229,7 +271,7 @@
     <link href="http://yoursite.com/2017/05/20/session%E4%B8%8Ecookie%E5%B0%8F%E7%BB%93/"/>
     <id>http://yoursite.com/2017/05/20/session与cookie小结/</id>
     <published>2017-05-20T03:57:05.000Z</published>
-    <updated>2017-06-07T06:33:22.000Z</updated>
+    <updated>2017-07-22T13:34:23.000Z</updated>
     
     <content type="html"><![CDATA[<p>最近在学session与cookie相关的内容，有以下几点疑点：</p>
 <ul>
@@ -275,7 +317,7 @@
     <link href="http://yoursite.com/2017/03/14/%E7%A7%BB%E5%8A%A8%E7%AB%AF%E5%BC%80%E5%8F%91%E7%9B%B8%E5%85%B3/"/>
     <id>http://yoursite.com/2017/03/14/移动端开发相关/</id>
     <published>2017-03-14T14:51:15.000Z</published>
-    <updated>2017-03-15T06:06:50.000Z</updated>
+    <updated>2017-07-22T13:34:23.000Z</updated>
     
     <content type="html"><![CDATA[<p>在做移动开发的过程中难免会遇到一些奇奇怪怪的问题，在此罗列如下:</p>
 <ul>
@@ -311,7 +353,7 @@
     <link href="http://yoursite.com/2017/03/06/react%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/"/>
     <id>http://yoursite.com/2017/03/06/react源码解读/</id>
     <published>2017-03-05T16:45:02.000Z</published>
-    <updated>2017-03-10T12:18:28.000Z</updated>
+    <updated>2017-07-22T13:34:23.000Z</updated>
     
     <content type="html"><![CDATA[<p>React源码.</p>
 ]]></content>
@@ -331,7 +373,7 @@
     <link href="http://yoursite.com/2017/02/08/javascript-hoisting/"/>
     <id>http://yoursite.com/2017/02/08/javascript-hoisting/</id>
     <published>2017-02-08T13:36:52.000Z</published>
-    <updated>2017-03-10T13:17:06.000Z</updated>
+    <updated>2017-07-22T13:34:23.000Z</updated>
     
     <content type="html"><![CDATA[<p>变量声明是任何一门语言最基础的一个方面.然而，JavaScript也一点诡异，也就是被称为<em>声明提升</em>,这会导致一个看起来无害的变量声明变成一个微妙的bug.本文将阐述什么是提升声明并且教你如何避免被其困扰。</p>
 <p>JavaScript是一门极其灵活的语言，所以可以让你随心所欲地在任何一个地方声明变量。比如，以下的自执行函数声明了三个变量并且之后用警告框来显示它们。需要注意的是，你不应该使用<code>alert</code>警告框,但是我们在这里是试着来验证<code>hoisted</code>而已。</p>
