@@ -1,5 +1,5 @@
 ---
-title: es6碎碎念
+title: ES6碎碎念
 date: 2017-06-11 00:20:25
 tags:
 categories:
@@ -16,7 +16,7 @@ categories:
   function bar(x = y, y = 2) {
     return [x, y]
   }
-  
+
   bar() // 报错
 ```
 
@@ -30,7 +30,7 @@ ES6支付宝临时性死区和`let`, `const`语句不出现变量提升，主要
   function func(arg) {
   	let args; // 报错
   }
-  
+
   function func(arg) {
   	{
   		let arg; // 不报错
@@ -115,11 +115,11 @@ function f() { console.log('I am outside!'); }
 
 ```
  const foo = {};
- 
+
  // 赋值
  foo.a = 123;
  foo.a // 123
- 
+
  // 将foo指向另一个对象，报错
  foo = {}; // Uncaught TypeError: Assignment to constant variable
 ```
