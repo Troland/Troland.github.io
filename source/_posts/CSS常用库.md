@@ -1,6 +1,6 @@
 ---
-title: CSS疑难杂症
-date: 2017-07-12 23:33:20
+title: CSS常用库
+date: 2017-08-10 21:35:14
 tags:
 - css
 categories:
@@ -8,7 +8,7 @@ categories:
 - FrontEnd
 ---
 
-input的line-height设置文字居中一般写的样式如下:
+input的line-height样式:
 
 ```
 .input {

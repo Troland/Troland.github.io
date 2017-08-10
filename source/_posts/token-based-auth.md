@@ -1,6 +1,6 @@
 ---
 title: Token-based-auth
-date: 2017-07-09 23:25:00
+date: 2017-08-10 21:37:13
 tags:
 - token
 - jwt
