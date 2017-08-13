@@ -1,6 +1,6 @@
 ---
 title: ES6碎碎念
-date: 2017-08-10 21:51:31
+date: 2017-6-11 21:51:31
 tags:
 categories:
 - ES2015

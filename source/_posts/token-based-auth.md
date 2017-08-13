@@ -25,7 +25,7 @@ response.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:8010");//这
 
 ```
 
-然后前端的ajax请求库中必须设置`withCredentials`为`true`。然而基于token的认证并无跨域问题。
+然后前端的ajax请求库中必须设置`withCredentials`为`true`。<s>然而基于token的认证并无跨域问题</s>。
 
 那么基于token的认证用到的主要有以下插件:
 - [bcrypt](https://www.npmjs.com/package/bcrypt) 加盐哈希密码用，有效抵御彩虹攻击。
@@ -36,6 +36,25 @@ response.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:8010");//这
 关于JsonWebToken可以参考这个[网站](https://jwt.io/)。
 
 项目是采用express-generator构建的。`npm i -g express-generator`即可。
+
+_express-jwt默认是检查请求头中的`authorization`字段来进行token的验证的但是也可以进行自定义获取token的方法_。然后会把相关的用户信息存储在`req.user`中。
+比如:
+
+```
+app.use(jwt({
+  secret: 'hello world !',
+  credentialsRequired: false, // 未注册的用户也可访问
+  getToken: function fromHeaderOrQuerystring (req) {
+    // 从头部信息获取或者在url上类似?token=adadfs这样获取
+    if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+        return req.headers.authorization.split(' ')[1]
+    } else if (req.query && req.query.token) {
+      return req.query.token
+    }
+    return null
+  }
+}))
+```
 
 下面贴出主要的代码:
 
@@ -101,5 +120,125 @@ Todolist:
 
 - [ ] 登录次数限制
 - [ ] 安全检测
-- [ ] 权限控制
+- [x] 权限控制
 - [ ] 用户注册进行严格的密码字符的控制
+
+----
+
+2017.8.13
+
+## 跨域问题
+现在由于有好些都是前后端分离的项目所以会出现跨域的问题，关于跨域的问题网上已有很多，这里不再赘述。这里只提供些方法:
+
+- 现在前后端分离，往往是后端作为API Server,然后关于前端的静态资源会走其它服务器。比如nginx配置成当请求数据服务器的时候导向后端的tomcats。
+
+举例如下:
+
+```
+http
+{
+  upstream tomcats
+  {
+    server 127.0.0.1:9001;
+    server 127.0.0.1:9002;
+  }
+  server {
+      listen       8000;
+      server_name  localhost;
+
+      # 如果请求路径跟文件路径按照如下方式匹配找到了，直接返回
+      try_files $uri $uri/index.html;
+      location ^/(js|css|image|font)/ {
+        # 静态资源都在 static 文件夹下
+        root /abc/static/;
+      }
+      #charset koi8-r;
+
+      #access_log  logs/host.access.log  main;
+
+      location / {
+          root   /pathtoroot;
+          index  index.html index.htm;
+      }
+      error_page  404              /404.html;
+
+      location /api {
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header Host $http_host;
+          proxy_set_header X-NginX-Proxy true;
+          proxy_pass http://tomcats;
+          proxy_redirect off;
+      }
+  }
+}
+```
+
+当请求的是静态资源的时候就会指向nginx指定的目录，当是请求的api的时候会指向tomcat集群
+
+- 服务器配置允许跨域
+
+如果是`node`的话可以去加载[cors](https://www.npmjs.com/package/cors)包。示例代码码如下：
+
+```
+// 当跨域配置用cors插件
+const cors = require('cors')
+// 设置白免单可以指定允许多个ip源访问
+const whitelist = [
+  'http://192.168.1.139:3003',
+  'http://192.168.1.139:3100'
+]
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  },
+  credentials: true, //这里必须写这样才能够接收到header里面的cookie,若不需要获得cookie可不设置
+  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE'
+}
+const app = express()
+
+app.use(cors(corsOptions))
+
+app.post('/api/num', function (req, res) {
+  // 假设头是request.setRequestHeader('Authorization', 'Bearer ' + token);
+  req.get('authorization');
+})
+```
+## 权限控制
+引用[express-jwt-permissions](https://www.npmjs.com/package/express-jwt-permissions)。
+你可以全局使用这个权限的检查也可以只为某些受保护的资源进行权限控制，例如：
+
+全局使用:
+
+```
+const guard = require('express-jwt-permissions')()
+guard.check('admin')
+```
+
+为受保护资源进行权限控制:
+
+```
+app.post('/api/user', guard.check('status1'), function (req, res) {
+  console.log('Permissions:', req.user)
+  res.json({
+    code: 200,
+    username: 'tristan'
+  })
+})
+```
+
+那么这里的`permission`是从哪来的呢？
+首先用户注册，会获得默认的权限值, 或者由超级管理员进行注册生成用户。然后，超级管理员为用户设置权限。生成用户对应的`permission`值。
+
+代码可见[这里](https://github.com/Troland/permission)。
+
+Todolist:
+
+- [ ]**那么当项目是否是前后端分离的时候，这个权限应该如何控制会是最优解呢？**
+
+且听下回分解^.^。
