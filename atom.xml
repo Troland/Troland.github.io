@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2017-08-13T09:25:16.000Z</updated>
+  <updated>2017-08-27T04:15:48.000Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -14,6 +14,99 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Bootstrap affix 源码解读</title>
+    <link href="http://yoursite.com/2017/08/20/Bootstrap-affix-%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/"/>
+    <id>http://yoursite.com/2017/08/20/Bootstrap-affix-源码解读/</id>
+    <published>2017-08-20T09:48:07.000Z</published>
+    <updated>2017-08-27T04:15:48.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>许多情况下我们都需要去处理那种导航在页面滑动了一定的距离然后固定导航的需求，然后有可能会要求在滚动到距询问多少距离的时候又不固定导航。Bootstrap affix就是为此设计的。</p>
+<p>功能需求：</p>
+<ul>
+<li>当页面滚动到一定距离即固定住元素</li>
+<li>当页面滚动到距离底部一定距离的时候不再固定元素而是绝对定位元素</li>
+</ul>
+<p>思路分三个阶段：</p>
+<ul>
+<li>当用户没有滚动到阀值的时候是一个类affix-top</li>
+<li>当用户滚动到阀值的时候类改为affix，然后样式化这个类比如写position:fixed</li>
+<li>当用户到达底部阀值的时候元素类改为affix-bottom,然后样式化这个类比如position:absolute</li>
+</ul>
+<p><strong> 当发现固定部分在滚动有抖动现象需要给<code>body</code>设置</strong>position:relative**。</p>
+<blockquote>
+<p>名词解释:</p>
+<p>视窗高度：所看到的高度不包括可滚动的距离<br>内容高度：所看到的高度加上可滚动的距离</p>
+</blockquote>
+<p>首先知道CSS定位<code>position</code>属性:</p>
+<blockquote>
+<h2 id="引用自MDN-css-position"><a href="#引用自MDN-css-position" class="headerlink" title="引用自MDN css position"></a>引用自<a href="https://developer.mozilla.org/en-US/docs/Web/CSS/position" target="_blank" rel="external">MDN css position</a></h2><p>所谓的<code>positioned element</code>即定位为<strong>relative</strong>,<strong>absolute</strong>,<strong>fixed</strong>或者<strong>sticky</strong>。</p>
+<ul>
+<li>fixed: 元素相对于<strong>视窗</strong>的定位。不随滚动条滚动。</li>
+<li>absolue: 元素相对于<strong>最近有定位父级元素</strong>的定位，如果元素有外边距则会增加进<code>offset</code>位移属性里面,会随滚动条滚动。</li>
+<li>relative: 相对于元素本身本来的位置的定位。</li>
+</ul>
+</blockquote>
+<p>然后需要知道的是关于<code>jQuery</code>的<code>offset</code>函数，<code>$(elem).offset()</code>获得元素在文档中的位移值默认输出<code>{top: top值, left: left值}</code>。<br>元素的position属性所导致的值的不同:</p>
+<ul>
+<li>当元素为<code>relative</code>或者不设置的时候, 当页面滚动的时候, <code>$(elem).offset()</code>值保持不变。</li>
+<li>当元素为<code>absolute</code>的时候, 当页面滚动的时候, <code>$(elem).offset()</code>值保持不变,因为他是随着最近的有定位的父级元素滚动的。</li>
+<li>当元素为<code>fixed</code>的时候，当页面滚动的时候, <code>$(elem).offset()</code>值为元素的<code>top</code>值加上滚动容器滚动的距离。</li>
+</ul>
+<p>Bootstrap affix源码解读如下:</p>
+<h3 id="构造函数"><a href="#构造函数" class="headerlink" title="构造函数"></a>构造函数</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">var Affix = function (element, options) &#123;</div><div class="line">  this.options = $.extend(&#123;&#125;, Affix.DEFAULTS, options)</div><div class="line"></div><div class="line">  this.$target = $(this.options.target)</div><div class="line">    .on(&apos;scroll.bs.affix.data-api&apos;, $.proxy(this.checkPosition, this))</div><div class="line">    .on(&apos;click.bs.affix.data-api&apos;$.proxy(this.checkPositionWithEventLoop,this))</div><div class="line"></div><div class="line">  this.$element     = $(element)</div><div class="line">  this.affixed      = null</div><div class="line">  this.unpin        = null</div><div class="line">  this.pinnedOffset = null</div><div class="line"></div><div class="line">  this.checkPosition()</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>首先是获得滚动容器<code>this.$target</code>,还有作用的元素<code>this.$element</code>,<code>this.affixed</code>为目标元素的定位的状态值为<strong>top, bottom, false, null</strong>,<code>this.unpin</code>指的是当滚动到底部阀值的时候的位移值为<strong>null或者元素的位移值减去滚动容器（默认为window）滚动的距离</strong>。<code>this.pinnedOffset</code>同<code>this.unpin</code>。<br>事件代理目标滚动容器（<em>默认为window</em>）的滚动事件和点击事件。</p>
+<h3 id="检查元素状态"><a href="#检查元素状态" class="headerlink" title="检查元素状态"></a>检查元素状态</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">Affix.prototype.getState = function (scrollHeight, height, offsetTop, offsetBottom) &#123;</div><div class="line">  var scrollTop    = this.$target.scrollTop()</div><div class="line">  var position     = this.$element.offset()</div><div class="line">  var targetHeight = this.$target.height()</div><div class="line"></div><div class="line">  if (offsetTop != null &amp;&amp; this.affixed == &apos;top&apos;) return scrollTop &lt; offsetTop ? &apos;top&apos; : false</div><div class="line"></div><div class="line">  if (this.affixed == &apos;bottom&apos;) &#123;</div><div class="line">    if (offsetTop != null) return (scrollTop + this.unpin &lt;= position.top) ? false : &apos;bottom&apos;</div><div class="line">    return (scrollTop + targetHeight &lt;= scrollHeight - offsetBottom) ? false : &apos;bottom&apos;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  var initializing   = this.affixed == null</div><div class="line">  var colliderTop    = initializing ? scrollTop : position.top</div><div class="line">  var colliderHeight = initializing ? targetHeight : height</div><div class="line"></div><div class="line">  if (offsetTop != null &amp;&amp; scrollTop &lt;= offsetTop) return &apos;top&apos;</div><div class="line">  if (offsetBottom != null &amp;&amp; (colliderTop + colliderHeight &gt;= scrollHeight - offsetBottom)) return &apos;bottom&apos;</div><div class="line"></div><div class="line">  return false</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>当<code>offsetTop&#39;有值并且固定的状态为</code>top<code>则判断</code>scrollTop &lt; offsetTop<code>滚动距离是否小于顶部阀值，是则返回</code>top<code>否则返回</code>false`。</p>
+<p>如果固定状态为<code>bottom</code>并且<code>offsetTop</code>有值则判断<code>scrollTop</code>滚动的距离加上相对位移值<code>this.unpin</code>和元素的绝对位移值<code>position.top</code>,若小于或等于则返回<code>false</code>否则返回<code>bottom</code>。</p>
+<p>若<code>offsetTop</code>为空则计算滚动距离加上滚动窗口的视窗高度和容器的总高度<code>scrollHeight</code>(即包括可滚动距离和视窗的高度)的值减去<code>offsetBottom</code>底部阀值作对比若小则返回<code>false</code>否则返回<code>bottom</code>。</p>
+<p>接下来判断是否是初始化，设置<code>colliderTop</code>和<code>colliderHeight</code>,当是第一次渲染的时候，分别为滚动的距离和目标滚动容器的视窗高度,否则分别为目标元素的绝对位移和目标元素的高度值。</p>
+<p>如果传进来的顶部绝对位移值不为空并且滚动距离小于传进来的顶部阀值则返回<code>top</code>。</p>
+<p>如果传进来的底部阀值不为空并且<code>colliderTop</code>和<code>colliderHeight</code>的和大于或等于目标容器的总高度减去传进来的底部阀值则返回<code>bottom</code>。<br>即当元素一直滚动到大于滚动的阀值的时候返回<code>bottom</code>, 默认返回<code>false</code>即处于<code>affix</code>状态。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">if (this.affixed == &apos;bottom&apos;) &#123;</div><div class="line">  if (offsetTop != null) return (scrollTop + this.unpin &lt;= position.top) ? false : &apos;bottom&apos;</div><div class="line">  return (scrollTop + targetHeight &lt;= scrollHeight - offsetBottom) ? false : &apos;bottom&apos;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><em>当为<code>affix-bottom</code>状态</em>这个是难点</p>
+<p>当为bottom的时候posiiton.top为scrollHeight - height - offsetBottom,this.unpin是<code>position.top - scrollTop</code>，当<code>offsetTop</code>不为空则判断是向下滚动还是向上滚动若向上滚动则有可能会进入<code>affix</code>状态，若向下滚动则是<code>affix-bottom</code>状态。</p>
+<p>当<code>offsetTop</code>设置为空的时候，比较目标窗口滚动的距离+目标窗口的视窗高度和目标容器的内容高度(包括滚动距离)减去底部阀值若小于则是在<code>affix</code>状态否则进入底部状态并设置类<code>affix-bottom</code>。</p>
+<h3 id="获得锁定状态的位移值"><a href="#获得锁定状态的位移值" class="headerlink" title="获得锁定状态的位移值"></a>获得锁定状态的位移值</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">Affix.prototype.getPinnedOffset = function () &#123;</div><div class="line">  if (this.pinnedOffset) return this.pinnedOffset</div><div class="line">  this.$element.removeClass(Affix.RESET).addClass(&apos;affix&apos;)</div><div class="line">  var scrollTop = this.$target.scrollTop()</div><div class="line">  var position  = this.$element.offset()</div><div class="line">  return (this.pinnedOffset = position.top - scrollTop)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>获取锁定状态的值，当即将进入<code>offsetBottom</code>阀值的时候触发。这个会获取在<code>affix</code>状态进入<code>affix-bottom</code>的时候的定值，即元素仍然为<code>affix</code>状态的时候的阀值。若目标元素在<code>affix</code>状态定位为<code>fixed</code>则此值为CSS类<code>affix-fixed</code>设定的<code>fixed</code>状态的<code>top</code>值。</p>
+<h3 id="检测位置"><a href="#检测位置" class="headerlink" title="检测位置"></a>检测位置</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line">Affix.prototype.checkPosition = function() &#123;</div><div class="line">  if (!this.$element.is(&apos;:visible&apos;)) return</div><div class="line"></div><div class="line">  var height = this.$element.height()</div><div class="line">  var offset = this.options.offset</div><div class="line">  var offsetTop = offset.top</div><div class="line">  var offsetBottom = offset.bottom</div><div class="line">  var scrollHeight = Math.max($(document).height(), $(document.body).height())</div><div class="line"></div><div class="line">  if (typeof offset != &apos;object&apos;) offsetBottom = offsetTop = offset</div><div class="line">  if (typeof offsetTop == &apos;function&apos;) offsetTop = offset.top(this.$element)</div><div class="line">  if (typeof offsetBottom == &apos;function&apos;) offsetBottom = offset.bottom(this.$element)</div><div class="line"></div><div class="line">  var affix = this.getState(scrollHeight, height, offsetTop, offsetBottom)</div><div class="line"></div><div class="line">  if (this.affixed != affix) &#123;</div><div class="line">    if (this.unpin != null) this.$element.css(&apos;top&apos;, &apos;&apos;)</div><div class="line"></div><div class="line">    var affixType = &apos;affix&apos; + (affix ? &apos;-&apos; + affix : &apos;&apos;)</div><div class="line">    var e = $.Event(affixType + &apos;.bs.affix&apos;)</div><div class="line"></div><div class="line">    this.$element.trigger(e)</div><div class="line"></div><div class="line">    if (e.isDefaultPrevented()) return</div><div class="line">    this.affixed = affix</div><div class="line">    this.unpin = affix == &apos;bottom&apos; ? this.getPinnedOffset() : null</div><div class="line"></div><div class="line">    this.$element.removeClass(Affix.RESET).addClass(affixType).trigger(affixType.replace(&apos;affix&apos;, &apos;affixed&apos;) + &apos;.bs.affix&apos;)</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  if (affix == &apos;bottom&apos;) &#123;</div><div class="line">    this.$element.offset(&#123;</div><div class="line">      top: scrollHeight - height - offsetBottom</div><div class="line">    &#125;)</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>若元素不可见则返回,这里的目标容器的高度是取的<code>document</code>和<code>document.body</code>之间的最大值。<br>获取选项中的<code>offset</code>变量，若为非对象则<code>offsetBottom</code>,<code>offsetTop</code>和<code>offset</code>相同。<br>若<code>offset</code>中的<code>offsetTop</code>和<code>offsetBottom</code>为函数则执行函数，这里是相当的有用的地方。<br><strong>这里若设置的<code>offset</code>为对象如<code>offset: { bottom: 30 }</code>则一开始就处在<code>affix</code>的状态。</strong><br>获得<code>affix</code>值,<code>this.getState(scrollHeight, height, offsetTop, offsetBottom)</code>。</p>
+<p>当<code>this.affixed</code>不等于<code>affix</code>值的时候，如果<code>this.unpin</code>不为空则去除<code>top</code>值。重置的意思。<br><code>affixType</code>即为元素所处状态的类型若是在顶部阀值内则是<code>affix-top</code>类，若触发则是<code>affix</code>,若<br>这是自己合成了事件比如<code>affix-top.bs.affix</code>这样的事件，也就是说你可以自定义这个事件，在里面进行一些操作当滚动的时候，如果在自定义的函数里面<code>return false</code>即<code>e.isDefaultPrevented</code>为true, <code>if (e.isDefaultPrevented()) return</code>将不会继续执行下去。<br>例如可以这样写:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">$(&apos;#J_nav&apos;).on(&apos;affix.bs.affix&apos;, function (e) &#123;</div><div class="line">  alert(&apos;haha&apos;);</div><div class="line">&#125;).affix(&#123;</div><div class="line">  offset: &#123;</div><div class="line">    bottom: 30</div><div class="line">  &#125;</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<p><code>this.affixed</code>赋值为重新获取的状态值, 若是到达底部阀值则赋值<code>this.unpin</code>即为获取即将进入<code>affix-bottom</code>状态的位移值。<br>然后为目标元素增加对应的目标元素粘滞状态的类并触发诸如<code>affix.bs.affix</code>的事件。</p>
+<p>如果是到达底部的阀值即<code>affix</code>为<code>bottom</code>则设置目标元素的css<code>top</code>值为目标容器的内容高度(包含滚动距离)减去目标元素的高度减去底部阀值并设置元素为相对定位<code>relative</code>。</p>
+<p><code>if (this.unpin != null) this.$element.css(&#39;top&#39;, &#39;&#39;)</code>若元素是从<code>affix-bottom</code>状态进入<code>affix</code>则去除元素的<code>top</code>值。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Affix.prototype.checkPositionWithEventLoop = function () &#123;</div><div class="line">  setTimeout($.proxy(this.checkPosition, this), 1)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>当点击滚动条的时候触发。</p>
+<p>这里从代码可以发现一个问题，当滚动到底部阀值的时候:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">if (affix == &apos;bottom&apos;) &#123;</div><div class="line">  this.$element.offset(&#123;</div><div class="line">    top: scrollHeight - height - offsetBottom</div><div class="line">  &#125;)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>会给目标元素增加<code>position: relative</code>这样的定位属性，但是当回到<code>affix</code>状态的时候，还会带着<code>position: relative</code>这个属性，显然是不对的搜索了下<a href="https://github.com/twbs/bootstrap/pull/19934/commits/855109da359ac31fad80eb5168a5ebfed5c74853" target="_blank" rel="external">bootstrap issues</a>。但是这个有问题，如果代码改为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">if (this.unpin != null) &#123;</div><div class="line">  this.$element.css(&apos;position&apos;, &apos;&apos;)</div><div class="line">  this.$element.css(&apos;top&apos;, &apos;&apos;)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在状态切换的时候会出现页面抖动的现象！！</p>
+<p>Todolist:</p>
+<ul>
+<li style="list-style: none"><input type="checkbox"> 当滚动到底部阀值的时候，元素会被设置成<code>position: relative</code>,当回到<code>affix</code>状态的时候，这个<code>affix</code>状态的类就便无法起作用。</li>
+</ul>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;许多情况下我们都需要去处理那种导航在页面滑动了一定的距离然后固定导航的需求，然后有可能会要求在滚动到距询问多少距离的时候又不固定导航。Bootstrap affix就是为此设计的。&lt;/p&gt;
+&lt;p&gt;功能需求：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;当页面滚动到一定距离即固定住元素&lt;/li
+    
+    </summary>
+    
+      <category term="Tech" scheme="http://yoursite.com/categories/Tech/"/>
+    
+      <category term="FrontEnd" scheme="http://yoursite.com/categories/Tech/FrontEnd/"/>
+    
+    
+      <category term="affix" scheme="http://yoursite.com/tags/affix/"/>
+    
+  </entry>
   
   <entry>
     <title>JavaScript-hoisting</title>
@@ -247,10 +340,10 @@
   
   <entry>
     <title>Bootstrap scrollspy 源码解读</title>
-    <link href="http://yoursite.com/2017/08/06/%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/"/>
-    <id>http://yoursite.com/2017/08/06/源码解读/</id>
+    <link href="http://yoursite.com/2017/08/06/Bootstrap-scrollspy-%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/"/>
+    <id>http://yoursite.com/2017/08/06/Bootstrap-scrollspy-源码解读/</id>
     <published>2017-08-06T07:35:13.000Z</published>
-    <updated>2017-08-06T15:50:51.000Z</updated>
+    <updated>2017-08-20T11:10:19.000Z</updated>
     
     <content type="html"><![CDATA[<p>最近有在做一个滚动效果即：左边导航栏，右边内容，然后滚动左边导航栏导航当对应的内容块显示会激活导航。阅读了下Bootstrap的scrollspy源码，记录如下：</p>
 <p>功能需求:</p>
@@ -276,11 +369,29 @@
 <p>因为当滚动容器为body的时候就得计算元素在body上面的位移，而如果非body的话就在滚动容器里面比如<br><code>&lt;div class=&quot;scroll-container&quot;&gt;&lt;/div&gt;</code>当滚动的内容在里面的时候得设置滚动容器的样式<code>position: relative</code>。<br>当设置为<code>position</code>的时候里面的内容元素即为相对于此容器的位移而不是相对于<code>body</code>。</p>
 <p>接下来是激活导航的方法：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">ScrollSpy.prototype.activate = function (target) &#123;</div><div class="line">  this.activeTarget = target</div><div class="line">  </div><div class="line">  this.clear()</div><div class="line"></div><div class="line">  var selector = this.selector +</div><div class="line">    &apos;[data-target=&quot;&apos; + target + &apos;&quot;],&apos; +</div><div class="line">    this.selector + &apos;[href=&quot;&apos; + target + &apos;&quot;]&apos;</div><div class="line"></div><div class="line">  var active = $(selector)</div><div class="line">    .parents(&apos;li&apos;)</div><div class="line">    .addClass(&apos;active&apos;)</div><div class="line">   </div><div class="line">  // 若激活的导航的父元素有dropdown-men类则为其</div><div class="line">  if (active.parent(&apos;.dropdown-menu&apos;).length) &#123;</div><div class="line">    active = active</div><div class="line">      .closest(&apos;li.dropdown&apos;)</div><div class="line">      .addClass(&apos;active&apos;)</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  active.trigger(&apos;activate.bs.scrollspy&apos;)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>疑问：<br>这里为什么要用<code>parents</code>?</p>
+<p>最后是那个<code>noConflict</code>方法, 因为有可能会有重名方法的插件所以需要使用这个关于这个的处理可以参见<a href="http://www.cnblogs.com/ip128/p/4609828.html" target="_blank" rel="external">这里</a>。我在这个基础上增加了自己的一个处理方法。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">var old = $.fn.scrollspy</div><div class="line"></div><div class="line">$.fn.scrollspy             = Plugin</div><div class="line">$.fn.scrollspy.Constructor = ScrollSpy</div><div class="line"></div><div class="line"></div><div class="line">// SCROLLSPY NO CONFLICT</div><div class="line">// =====================</div><div class="line"></div><div class="line">$.fn.scrollspy.noConflict = function () &#123;</div><div class="line">  $.fn.scrollspy = old</div><div class="line">  return this</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在实际使用的过程中,根据所使用的Bootstrap插件在页面中出现的位置会有不同的处理方法,下面分情况来讲解:</p>
+<ul>
+<li>当Bootstrap插件在自定义的插件之后的时候, 若想调用自定义的插件则<code>$.fn.scrollspy.noConflict</code>即可。</li>
+<li><p>若Bootstrap插件在自定义的插件之前: 则有两种解决办法: </p>
+<ul>
+<li><p>可以在两个插件之间写上</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">var Af = $.fn.scrollspy.noConflict()</div><div class="line">$.fn.Af = Af</div><div class="line">这样后面想要调用该方法就调用`$(el).Af()`</div></pre></td></tr></table></figure>
+</li>
+<li><p>或者是把后面自定义的插件写成类似这样：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">(function($)&#123;</div><div class="line">      var old = $.fn.scrollspy; //必须写在第一行</div><div class="line">      $.fn.scrollspy=function()&#123;</div><div class="line">          alert(&quot;自定义scrollspy插件&quot;);</div><div class="line">      &#125;</div><div class="line">      $.fn.scrollspy.noConflict = function () &#123;</div><div class="line">        $.fn.scrollspy = old</div><div class="line">        return this</div><div class="line">      &#125;</div><div class="line">&#125;)(jQuery);</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<p>疑问：</p>
+<ul>
+<li>这里为什么要用<code>parents</code>?</li>
+</ul>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">var active = $(selector)</div><div class="line">          .parents(&apos;li&apos;)</div><div class="line">          .addClass(&apos;active&apos;)</div></pre></td></tr></table></figure>
 <p>清除激活状态导航的激活状态：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">ScrollSpy.prototype.clear = function () &#123;</div><div class="line">    $(this.selector)</div><div class="line">      .parentsUntil(this.options.target, &apos;.active&apos;)</div><div class="line">      .removeClass(&apos;active&apos;)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>疑问:</p>
 <ul>
 <li>当那些导航是异步请求加载出来的，这个时候应该如何做？</li>
 </ul>
