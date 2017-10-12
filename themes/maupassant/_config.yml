@@ -45,6 +45,8 @@ widgets: ## Six widgets in sidebar provided: search, category, tag, recent_posts
 links:
   - title: 医方
     url: http://www.w.com/
+  - title: 我的Github
+    url: https://github.com/Troland
 
 # Static files
 js: js
