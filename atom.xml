@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2017-10-14T07:48:22.000Z</updated>
+  <updated>2017-10-21T09:35:10.000Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,33 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Nodejs ES6</title>
+    <link href="http://yoursite.com/2017/10/21/Nodejs-ES6/"/>
+    <id>http://yoursite.com/2017/10/21/Nodejs-ES6/</id>
+    <published>2017-10-21T09:08:48.000Z</published>
+    <updated>2017-10-21T09:35:10.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>现在写前端大多数情况下会应用蛮多<code>ES6</code>的语法，当你在写<code>Node</code>的时候，当然也会希望使用<code>ES6</code>的特性了，不然会搞得你有些沮丧，淘宝有一篇专门写了<a href="http://taobaofed.org/blog/2016/01/07/find-back-the-lost-es6-features-in-nodejs/" target="_blank" rel="external">这个</a>。不过有些时间了，不是很赞同那样做。</p><p>根据自己的理解，查了下<a href="http://babeljs.io/docs/plugins/preset-env/" target="_blank" rel="external">Babel官网的介绍</a>, 可以作如下的配置:</p><p>不同的<code>Node</code>版本兼容的<code>ES6</code>可以查看<a href="http://node.green" target="_blank" rel="external">这里</a>。</p><h2 id="安装babel-preset及babel工具"><a href="#安装babel-preset及babel工具" class="headerlink" title="安装babel-preset及babel工具"></a>安装babel-preset及babel工具</h2><blockquote><p>根据官网的介绍，利用这个你可以指定不同的环境而不用去手动配置<code>plugins</code>, 旧的只支持当年批准的那个议案。</p></blockquote><p>安装自己所需要的环境</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"># 安装 core 和命令行工具</div><div class="line">npm install --save-dev babel-core babel-cli</div><div class="line"># 安装 babel环境支持</div><div class="line">npm install babel-preset-env --save-dev</div><div class="line"># 安装 nodemon可以在你修改的时候自动重新加载node推荐安装哦</div><div class="line">npm i -g nodemon</div></pre></td></tr></table></figure><h2 id="配置-babelrc"><a href="#配置-babelrc" class="headerlink" title="配置.babelrc"></a>配置.babelrc</h2><p>创建<em>.babelrc</em>,当只写<code>[&quot;env&quot;]</code>的时候表示是兼容最新亦即包括(babel-preset-es2015, babel-preset-es2016, and babel-preset-es2017三个一起)。</p><p>因为这边是针对的<code>Node</code>，这里有一个配置蛮好:</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  &quot;presets&quot;: [</div><div class="line">    [&quot;env&quot;, &#123;</div><div class="line">      &quot;targets&quot;: &#123;</div><div class="line">        &quot;node&quot;: &quot;current&quot;</div><div class="line">      &#125;</div><div class="line">    &#125;]</div><div class="line">  ]</div><div class="line">&#125;</div></pre></td></tr></table></figure><p>这样配置以后，babel会根据你的<code>Node</code>的不同版本，自动添加不同的兼容插件，而不用你手动去加载。</p><h2 id="配置package-json"><a href="#配置package-json" class="headerlink" title="配置package.json"></a>配置package.json</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  &quot;main&quot;: &quot;dist/server.js&quot;,</div><div class="line">  &quot;scripts&quot;: &#123;</div><div class="line">    &quot;test&quot;: &quot;echo \&quot;Error: no test specified\&quot; &amp;&amp; exit 1&quot;,</div><div class="line">    &quot;dev&quot;: &quot;nodemon --exec babel-node src/server.js&quot;,</div><div class="line">    &quot;build&quot;: &quot;babel src --out-dir dist&quot;,</div><div class="line">    &quot;release&quot;: &quot;npm run build &amp;&amp; NODE_ENV=production nodemon dist/server.js&quot;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure><p><strong>然后最后如果plugins和presets一起也是可以的，就是需要注意这两个配置起来必须最后可以在任意一处可以输出对应的兼容的代码，否则打包出来的代码是不兼容的代码。比如没配置好那个<code>import</code>的支持就尴尬了</strong></p><p>最后，大功告成，就可以愉快地在<code>Node</code>下写<code>ES6</code>了。以上如有不对的地方还望指教，谢谢-^.^-。</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;现在写前端大多数情况下会应用蛮多&lt;code&gt;ES6&lt;/code&gt;的语法，当你在写&lt;code&gt;Node&lt;/code&gt;的时候，当然也会希望使用&lt;code&gt;ES6&lt;/code&gt;的特性了，不然会搞得你有些沮丧，淘宝有一篇专门写了&lt;a href=&quot;http://taobaofed.o
+      
+    
+    </summary>
+    
+      <category term="Tech" scheme="http://yoursite.com/categories/Tech/"/>
+    
+    
+      <category term="ES6" scheme="http://yoursite.com/tags/ES6/"/>
+    
+      <category term="Nodejs" scheme="http://yoursite.com/tags/Nodejs/"/>
+    
+  </entry>
   
   <entry>
     <title>ES6碎碎念经</title>
