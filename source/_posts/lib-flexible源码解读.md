@@ -5,8 +5,8 @@ tags:
 - Mobile
 - FrontEnd
 categories:
-- 源码阅读
 - Tech
+- Source
 ---
 
 [Flexible](https://github.com/amfe/lib-flexible)方案是淘宝的移动端适配方案,相关的文章在[这里](https://github.com/amfe/article/issues/17)
@@ -75,6 +75,7 @@ if (!dpr && !scale) {
 
 **这里有检测当在安卓下的时候并没有使用高清方案，具体的原因可见[issue](https://github.com/amfe/lib-flexible/issues/11)
 大概的意思就是说有些安卓设置的`initial-scale`不为1的时候会无效。**。由于这个原因会产生一些问题比如1px边框线的问题,具体可见网友的文章[基于淘宝弹性布局方案lib-flexible的问题研究](http://www.cnblogs.com/lyzg/p/5117324.html)
+
 
 这里在实际的工作过程假设有用`vue`的话，在移动端的适配过程中假设引用了一个`vue-star-rating`组件由于组件的`star-size`是设置的是数值，然后当你在安卓下的时候会发现这个星星会变得很大解决办法是利用`lib.flexible.dpr`或者`lib.flexible.rem`来动态设置这个组件的星星的大小，这里暂且只发现这种解决方案，如果有其它的方法或者其它的评价组件，或者自己写一个？欢迎指正-^.^-。
 
@@ -165,7 +166,115 @@ flexible.px2rem = function(d) {
 }
 ```
 
+---
+
+**2017.10.19后续**
+
+翻看了[ant-design](https://github.com/ant-design/ant-design-mobile/blob/master/components/style/mixins/hairline.less)中关于1px线的处理再和**libflexible.js**结合整理出了以下的sass函数：
+
+```
+@mixin hairline($color: #C7C7C7, $direction: left, $radius: 0) {
+
+  @if $direction != 'all' {
+    border-#{$direction}: 1PX solid $color;
+
+    [data-dpr="1"] & {
+      border-#{$direction}: none;
+      @media (min-resolution: 2dppx), (min-resolution: 192dpi) {
+        position: relative;
+
+        &:before {
+          content: " ";
+          position: absolute;
+          border-#{$direction}: 1PX solid $color;
+          @if $direction == 'top' {
+            left: 0;
+            top: 0;
+            right: 0;
+            height: 1PX;
+            transform-origin: 0 0;
+            transform: scaleY(0.5);
+          } @else if $direction == 'right' {
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 1PX;
+            transform-origin: 100% 0;
+            transform: scaleX(0.5);
+          } @else if $direction == 'bottom' {
+            left: 0;
+            bottom: 0;
+            right: 0;
+            height: 1PX;
+            transform-origin: 0 100%;
+            transform: scaleY(0.5);
+          } @else {
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 1PX;
+            transform-origin: 0 0;
+            transform: scaleX(0.5);
+          }
+        }
+
+        @media (min-resolution: 3dppx), (min-resolution: 288dpi) {
+          &:before {
+            @if $direction == 'top' {
+              transform: scaleY(0.33);
+            } @else if $direction == 'right' {
+              transform: scaleX(0.33);
+            } @else if $direction == 'bottom' {
+                transform: scaleY(0.33);
+            } @else {
+              transform: scaleX(0.33);
+            }
+          }
+        }
+      }
+    }
+  } @else {
+    border: 1PX solid $color;
+    border-radius: $radius;
+
+    [data-dpr="1"] & {
+      @media (min-resolution: 2dppx), (min-resolution: 192dpi) {
+        position: relative;
+        border: none;
+        transform: translateZ(0);
+
+        &:before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 200%;
+          height: 200%;
+          border: 1PX solid $color;
+          border-radius: $radius * 2;
+          transform-origin: 0 0;
+          transform: scale(0.5);
+          box-sizing: border-box;
+          pointer-events: none;
+          z-index: -1;
+        }
+      }
+    }
+  }
+}
+
+@mixin hairline-remove($direction: left) {
+  border-#{$direction}: 0;
+  &:before {
+    display: none !important;
+  }
+}
+```
+
+大体的意思是当处理**高清方案的时候**边框线是用的那个`border-#{$direction}`或者`border`边框线，然后利用缩放功能来获得细腻的边框线，当在安卓下的时候由伪类来显示那个边框线。
+
 *后面的更新的2.0版本，接下来将会进行一些思考和研究。*
+
 
 
 Todolist:

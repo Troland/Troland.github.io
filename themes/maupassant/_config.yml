@@ -19,13 +19,13 @@ menu:
     directory: .
     icon: fa-home
   - page: tech
-    directory: tech/
+    directory: categories/Tech/
     icon: fa-wrench
   - page: essay
-    directory: essay/
+    directory: categories/Essays/
     icon: fa-pencil
   - page: works
-    directory: works/
+    directory: categories/works/
     icon: fa-briefcase
   - page: archive
     directory: archives/

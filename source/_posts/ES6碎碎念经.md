@@ -1,12 +1,14 @@
 ---
-title: ES6碎碎念
-date: 2017-6-11 21:51:31
+title: ES6碎碎念经
+date: 2017-10-13 22:31:46
 tags:
+- FrontEnd
+- ES6
 categories:
-- ES2015
+- Tech
 ---
 
-最近开始学习和使用*ES6*了, 下面是自己的一些使用心得:
+使用*ES6*好些时间了, 下面是自己的一些使用心得:
 
 ## let与const
 
@@ -205,4 +207,19 @@ Symbol属性也会被Object.assign拷贝。
 let z = { a: 3, b: 4 };
 let n = { ...z };
 n // { a: 3, b: 4 }
+```
+
+## 关于函数
+
+```
+function add() {}
+```
+
+以上函数的长度是多少，一般情况下`add.length`为函数的参数个数但是如果函数的参数是`rest`呢？
+`rest`参数是不计入函数的`length`属性里面的。并且**rest**参数之后不能再有其它参数，但之前可以有其它参数。
+你可以在[Babel转换器官网](https://babeljs.io/repl/)上进行编码。
+```
+(function(a) {}).length  // 1
+(function(...a) {}).length  // 0
+(function(a, ...b) {}).length  // 1
 ```

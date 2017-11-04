@@ -15,27 +15,27 @@ categories:
 ## window.pageYOffset, window.pageXOffset
 
   获得文档在垂直方向或者水平方向的滚动距离。现如今*Vue*,*React*大行其道的今天好多兼容性都没在考虑的范围，不过这里还是要提下。这两个属性在IE<9的浏览器是不支持的。所以完整的兼容代码是：
-  
+
       ```
       let supportPageOffset = window.pageXOffset !== undefined
       let isCSS1Compat = ((document.compatMode || "") === "CSS1Compat")
-        
+
       let x = supportPageOffset ? window.pageXOffset : isCSS1Compat ? document.documentElement.scrollLeft : document.body.scrollLeft;
       let y = supportPageOffset ? window.pageYOffset : isCSS1Compat ? document.documentElement.scrollTop : document.body.scrollTop;
       ```
     然后在高版本的浏览器中可以用window.scrollX和window.scrollY来分别代替window.pageXOffset和window.pageYOffset。但是**IE浏览器不支持**。
-  
+
   `document.compatMode`表示用户是否在怪异模式吧或者标准模式下。怪异模式下则显示`BackCompat`,非怪异模式则返回`CSS1Compat`。
   之前在IE的时候调试兼容性的时候面板里面就会有怪异模式,当用户没有设定那个`<!DOCTYPE html>`头的时候就会
   在怪异模式下,返回值是`BackCompat`。
-  
+
   摘自[Mozilla中关于window.pageYOffset的表述](https://developer.mozilla.org/zh-CN/docs/Web/API/window/scrollY)
 
 ## clientWidth, clientHeight
 
  ![](/images/dimensions-client.png)
  获取元素的内宽度包括内边距(padding)离但不包括垂直滚动条,边框或者外边距(margin)。**这里的元素必须是非内联的元素**，除非设置内联元素默认显示属性即可设置其样式`display: inline-block`或者其它。`clientHeight`和`clientWidth`类似。
- 
+
 ## window.innerWidth,window.innerHeight，window.outerWidth, window.outerHeight
 
 ![](/images/innerheightvsouterheight.png)
@@ -57,7 +57,15 @@ categories:
 
 但是这里有个问题当是内联元素的时候这个显示会有些奇怪，因为那个内联元素是用的`Element.getClientRects`来获得宽度和高度从而导致这些内联元素不是个规则的有边框的盒模型。上面的示例就可以看到。
 
-`offsetParent`
+`offsetParent`是获取元素最近定位的父元素。
+
+**这里需要注意的是`getBoundingClientRect`获取top与`offsetTop`的区别**
+
+看下示例就明白了:
+
+{% jsfiddle Wudiemperor/bzewb0za js,html,css,result light %}
+
+这里的`getBoundingClientRect`是以视图上的位置为基准的即相对于**viewport**的上，右，下，左的距离，而`offsetTop`是以最近的**定位的元素**，这里的定位元素,如果目标元素是`fixed`或者目标元素的最近的父元素是`static`定位的话的话两者是相等的,否则一般是不相等(排队了元素未在视图顶部的情况)。一个是相对于视图，一个是相对于最近的有定位的父元素。
 
 ## clientLeft, clientTop, window.screenX, window.screenY
 
@@ -65,7 +73,7 @@ categories:
 
 `window.screenX` 用户的浏览器左边框和用户的屏幕左边之间的距离
 
-`window.screenY` 用户的浏览器上边框和用户的屏幕顶端之间的距离 
+`window.screenY` 用户的浏览器上边框和用户的屏幕顶端之间的距离
 
 ## scrollTop, scrollLeft, scrollWidth, scrollHeight
 
@@ -100,10 +108,10 @@ categories:
 function getScrollDis () {
   let supportPageOffset = window.pageXOffset !== undefined
   let isCSS1Compat = ((document.compatMode || "") === "CSS1Compat")
-    
+
   let x = supportPageOffset ? window.pageXOffset : isCSS1Compat ? document.documentElement.scrollLeft : document.body.scrollLeft;
   let y = supportPageOffset ? window.pageYOffset : isCSS1Compat ? document.documentElement.scrollTop : document.body.scrollTop;
-    
+
   return {
     top: y,
     left: x
@@ -117,12 +125,12 @@ function getScrollDis () {
 当滚动的容器是`body`的时候直接获取滚动的距离，和元素本页面的位移和滚动的距离作对比。
 
 ```
- 
+
  let rect = elem.getBoundingClientRect()
  let scrollTop = getScrollDis().top
  let offset = {}
  offset.top = rect.top + win.pageYOffset - docElem.clientTop
- 
+
 ```
 
 ### 当滚动的容器**不是body**的时候
@@ -130,6 +138,8 @@ function getScrollDis () {
 与上面的是类似的只是这里需要计算的是元素相对的滚动容器不一样，可以参考下jQuery的`elem.postion()`来取得元素的位置。
 
 ## 总结这里的进行判断有两种方法，可以实时进行计算滚动距离进行比较也可以采取和**Bootstrap**类似的方法初始化就位移区间的计算。只是这里在某些情况下你需要手动去重新计算一下位移区间。
+
+**以上的图片均来自于https://developer.mozilla.org/zh-CN/**
 
 TodoList:
 
