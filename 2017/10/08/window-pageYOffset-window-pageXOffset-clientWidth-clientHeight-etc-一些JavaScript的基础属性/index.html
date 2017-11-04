@@ -17,7 +17,7 @@
 <p><code>offsetParent</code>是获取元素最近定位的父元素。</p>
 <p><strong>这里需要注意的是<code>getBoundingClientRect</code>获取top与<code>offsetTop</code>的区别</strong></p>
 <p>看下示例就明白了:</p>
-<iframe scrolling="no" width="100%" height="300" src="//jsfiddle.net/Wudiemperor/bzewb0za//embedded/js,html,css,result/light" frameborder="0" allowfullscreen></iframe>
+<iframe scrolling="no" width="100%" height="300" src="//jsfiddle.net/Wudiemperor/bzewb0za/embedded/js,html,css,result/light" frameborder="0" allowfullscreen></iframe>
 <p>这里的<code>getBoundingClientRect</code>是以视图上的位置为基准的即相对于<strong>viewport</strong>的上，右，下，左的距离，而<code>offsetTop</code>是以最近的<strong>定位的元素</strong>，这里的定位元素,如果目标元素是<code>fixed</code>或者目标元素的最近的父元素是<code>static</code>定位的话的话两者是相等的,否则一般是不相等(排队了元素未在视图顶部的情况)。一个是相对于视图，一个是相对于最近的有定位的父元素。</p>
 <h2 id="clientLeft-clientTop-window-screenX-window-screenY"><a href="#clientLeft-clientTop-window-screenX-window-screenY" class="headerlink" title="clientLeft, clientTop, window.screenX, window.screenY"></a>clientLeft, clientTop, window.screenX, window.screenY</h2><p><code>clientLeft</code>一个元素左边边框的宽度包含垂直滚动条的宽度但并不包含左外边距和左内边距。<code>clientTop</code>类似。</p>
 <p><code>window.screenX</code> 用户的浏览器左边框和用户的屏幕左边之间的距离</p>
