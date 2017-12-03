@@ -8,6 +8,24 @@ categories:
 - FrontEnd
 ---
 
+最近一直在整理一些JavaScript基础知识，因为这些知识对于框架的构建等是很有好处的，本文大部分是翻译加上自己的理解。
+
+## getComputedStyle 和 getBoundingClientRect
+
+`getComputedStyle` 是获取元素的样式，这个属性在 IE9+ 支持，IE9 以下用 currentStyle。用法如下：
+
+
+```
+getComputedStyle(el)
+```
+
+`getBoundingClientRect` 是获取元素在当前视窗的位置，会随着滚动的位置而发生数值上的变化。除了 `position: fixed` 的元素。用法如下：
+
+```
+el.getBoundingClientRect
+```
+
+
 ## 事件模型
 
 假设有两个元素，元素A和元素B，元素A内嵌元素B。当两个元素同时绑定的相同的事件监听器的时候哪个会先触发？
@@ -164,14 +182,14 @@ function doSomething(e)
 
 ### currentTarget
 
-event有一个`target`或者`srcElement`(旧版本的IE包含这个属性)是指向注册该事件的元素。不管是在捕获还是冒泡阶段这个都会指向的注册了事件的元素。
+event有一个`target`或者`srcElement`(旧版本的IE包含这个属性)是指向触发了事件的元素。不管是在捕获还是冒泡阶段这个都会指向的**触发了事件的元素**。
 
 ```
 element1.onclick = doSomething;
 element2.onclick = doSomething;
 ```
 
-当用户点击了元素2`doSomething`会执行两次。那么如何知道被点击的是哪个元素呢？`currentTarget`会指向注册该事件的元素。但是微软并没有类似的属性。
+当用户点击了元素2`doSomething`会执行两次。那么如何知道被点击的是哪个元素呢？`currentTarget`会指向**注册该事件的元素**。但是微软并没有类似的属性。
 
 你可以在函数中用`this`关键字得到触发事件的元素。
 

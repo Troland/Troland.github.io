@@ -65,4 +65,41 @@ npm i -g nodemon
 
 **然后最后如果plugins和presets一起也是可以的，就是需要注意这两个配置起来必须最后可以在任意一处可以输出对应的兼容的代码，否则打包出来的代码是不兼容的代码。比如没配置好那个`import`的支持就尴尬了**
 
+## 调试
+
+### 对于Nodejs的原生代码
+
+根据[nodejs官方调试文档](https://nodejs.org/en/docs/inspector/)可以得知大概有以下步骤:
+
+- nodejs内置了node-inspect当然也可以单独安装`npm i -g node-inspect`，使用命令`
+node --inspect 代码.js`即可。**(这里如果是写成`node inspect 代码.js`的话是直接进入命令行的调试而不能在Chrome devtools中打开的，切记!)**。
+
+- 在Chrome **55+**的浏览器中打开`chrome://inspect`即可进行调试，或者你也可以安装[NIM](https://chrome.google.com/webstore/detail/nim-node-inspector-manage/gnhhdgbaldcilmgcpfddgdbkhjohddkj)。
+
+另外在_Visual Studio_, _JetBrains WebStorm_, _VS Code_都提供了对nodejs的友好调试，只需点击debug即可。
+
+另外,nodejs使用的是`--inspect-brk`,`--debug-brk`已经被遗弃
+
+### 调试Node ES6
+
+#### 命令行
+
+使用命令行`babel-node debug src/server.js`即可在命令行调试代码。然后用在命令行中用`next`执行下一条命令, 这个里面的命令其实和在控制台调试JavaScript是保持一致的,比如当你在浏览器中调试代码里面可以设置断点之类，然后在最面板中有`step`,`next`等图标。
+
+另外当使用`babel-node --inspect`或者`babel-node --inspect-brk`的进修然后打开Chrome浏览器中输入chrome://inspect即可进行调试。
+
+
+### WebStorm编辑器
+
+在编辑器设置步骤是先打开配置搜索_JavaScript_在里面配置使其支持**ES6**。
+
+然后在那个Debug的右边的第一个选项卡配置的`Node interpreter`设置成为自己本地或者全局安装的那个babel-node.js的路径。这个babel-node是由安装babel-cli包所生成的。可以指定本项目下面的或者是全局的那个都可以。
+
+最后在`Node parameters`中设置参数由于node 8.x版本使用`--inspect-brk`或者`--inspect`都可以,`--debug-brk`已经被遗弃或者使用
+
+
 最后，大功告成，就可以愉快地在`Node`下写`ES6`了。以上如有不对的地方还望指教，谢谢-^.^-。
+
+TodoList:
+
+- [ ]这个调试的时候发现不会热更新，笑哭，应该怎么实现呢？
