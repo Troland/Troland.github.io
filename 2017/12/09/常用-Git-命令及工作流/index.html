@@ -12,6 +12,8 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">git checkout 75e7a</div><div class="line">touch a.css</div><div class="line">git add a.css</div><div class="line">git commit -am &quot;commit messaege&quot; // 这个时候commid会变</div><div class="line">git checkout test</div><div class="line">git log -p 75e7a</div></pre></td></tr></table></figure>
 <p><code>git commit -am</code>这里只对已经进版本的文件有用，新添加的文件得先<code>git add</code>。</p>
 <p><code>git checkout HEAD file</code>选择文件在暂存区中的修改回归到其最近的提交。</p>
+<p>如果想要回滚某个文件到指定的提交的话可以使用如下命令：</p>
+<p><code>git checkout commitId -- file1/to/restore file2/to/restore</code><br><code>git checkout commitId~1 -- file1/to/restore file2/to/restore</code> 表示回滚到 commitId 前一个 commitId。</p>
 <h2 id="不可撤消及危险的命令"><a href="#不可撤消及危险的命令" class="headerlink" title="不可撤消及危险的命令"></a>不可撤消及危险的命令</h2><p><code>git rebase</code>，<code>git commit --amend</code>，<code>git reset</code>，都不要用在仓库的公共的分支、提交上面。<strong>只适宜操作自己本地的提交即在自己本地的未发布到分支上的提交。</strong></p>
 <p><code>git rebase &lt;base&gt;</code>即将本分支的提交变更到目标提交，base 可以是分支、提交等，例如:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">git checkout new-feature</div><div class="line">git rebase master</div><div class="line">git checkout master</div><div class="line">git merge new-feature</div></pre></td></tr></table></figure>
@@ -36,13 +38,14 @@
 <p><strong>只推送到那些以 –bare 方式初始化的仓库。</strong></p>
 <p><em>为防止覆盖中央仓库的历史，会拒绝你会导致非快速向前合并的推送请求。如果远程提交历史和本地提交历史分叉，就需要先拉取远程分支再进行提交。慎重使用 –force 选项</em></p>
 <h2 id="提交引用"><a href="#提交引用" class="headerlink" title="提交引用"></a>提交引用</h2><p><code>git show commitID</code>显示提交 id 的信息。</p>
+<h2 id="比较分支不同"><a href="#比较分支不同" class="headerlink" title="比较分支不同"></a>比较分支不同</h2><p><code>git diff</code> 比较工作环境和暂存区的不同，<code>git diff --staged</code> 比较暂存区和上次最新的提交的不同。<code>git diff master branchB</code> 比较两个提交的不同。<br><code>git diff origin/test a.txt</code> 比较远程分支上的文件和现在的文件的不同。</p>
 <h2 id="分支"><a href="#分支" class="headerlink" title="分支"></a>分支</h2><p><code>git branch -m &lt;branch&gt;</code>重命名当前分支</p>
 <p><code>git checkout -b &lt;new-branch&gt; &lt;existing-branch&gt;</code>以<code>&lt;existing-branch&gt;</code>作为基准，若无则是当前分支。</p>
 <p><code>git branch -r</code>查看远程的分支。</p>
 <p>若是想要抓取远程的分支到本地首先得把远程的分支先 fetch 到本地，如下：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">git fetch remote remotebranch</div><div class="line">git co -b new-branch remote/remotebranch</div></pre></td></tr></table></figure>
 <p><code>git push origin --delete [分支名]</code>和<code>git push 远程名 :[分支名]</code>删除远程分支。</p>
-<h2 id="Reset、Checkout、Revert"><a href="#Reset、Checkout、Revert" class="headerlink" title="Reset、Checkout、Revert"></a>Reset、Checkout、Revert</h2><h2 id="Pull-Request"><a href="#Pull-Request" class="headerlink" title="Pull Request"></a>Pull Request</h2><p>Pull Request 是协作者向目标仓库发起合并请求的方式，在 Github 上假设用户 tristan Fork 了 isolde 的项目，这个时候 tristan 有了项目的副本，然后在本地<code>git clone user/a.git</code>到本地，然后创建功能分支<code>git co -b new-feature</code>在 new-feature 分支上作了修改然后提交到自己的远程仓库，然后在 Github 上面点击 Pull Request 按钮指明自己的源库和源分支和目标仓库(即 isolde 的仓库)和目标分支，然后写上标题就可以了。Github 会发邮件给 isolde。</p>
+<h2 id="Pull-Request"><a href="#Pull-Request" class="headerlink" title="Pull Request"></a>Pull Request</h2><p>Pull Request 是协作者向目标仓库发起合并请求的方式，在 Github 上假设用户 tristan Fork 了 isolde 的项目，这个时候 tristan 有了项目的副本，然后在本地<code>git clone user/a.git</code>到本地，然后创建功能分支<code>git co -b new-feature</code>在 new-feature 分支上作了修改然后提交到自己的远程仓库，然后在 Github 上面点击 Pull Request 按钮指明自己的源库和源分支和目标仓库(即 isolde 的仓库)和目标分支，然后写上标题就可以了。Github 会发邮件给 isolde。</p>
 <p>当 isolde 接到合并请求进行审阅，然后提建议，tristan 可以进行修改，提交之后会自动通知到 Pull Request中，当 isolde 觉得可以了就会合并请求并关闭 Pull Request。</p>
 <h2 id="工作流"><a href="#工作流" class="headerlink" title="工作流"></a>工作流</h2><h3 id="中心化工作流"><a href="#中心化工作流" class="headerlink" title="中心化工作流"></a>中心化工作流</h3><p>中心化非常简单即只有一个 master 分支，所有的成员都只是在这一分支下工作。</p>
 <h3 id="功能分支的工作流"><a href="#功能分支的工作流" class="headerlink" title="功能分支的工作流"></a>功能分支的工作流</h3><p>每个人在开始新功能的时候创建功能分支，完成了提交到远程服务器，发布一个 Pull Request，审核通过，再合并到本地的 master 分支然后再推送到远程中央仓库，最后关闭 Pull Request。</p>
