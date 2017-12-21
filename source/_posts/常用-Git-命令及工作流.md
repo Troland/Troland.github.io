@@ -52,6 +52,11 @@ git log -p 75e7a
 
 `git checkout HEAD file`选择文件在暂存区中的修改回归到其最近的提交。
 
+如果想要回滚某个文件到指定的提交的话可以使用如下命令：
+
+`git checkout commitId -- file1/to/restore file2/to/restore`
+`git checkout commitId~1 -- file1/to/restore file2/to/restore` 表示回滚到 commitId 前一个 commitId。
+
 ## 不可撤消及危险的命令
 
 `git rebase`，`git commit --amend`，`git reset`，都不要用在仓库的公共的分支、提交上面。**只适宜操作自己本地的提交即在自己本地的未发布到分支上的提交。**
@@ -69,7 +74,6 @@ git merge new-feature
 
 `git reset --hard`和`git reset`的区别是当在暂存区里面有文件的时候，`--hard`会把处于暂存区的文件清除掉，而未加`--hard`的时候只是把暂存区的文件退回到工作区域，文件并没有消失。
 
-
 比如下面的操作：
 
 ```
@@ -84,6 +88,7 @@ git reset --hard // 重设这个时候处于暂存区的文件 b.js 将不会在
 ```
 
 `git reset --hard`通常和`git clean -f`一起使用，因为前一个命令只是是将暂存区的文件删除，但是在工作区的文件并没有删除。
+
 ## 回滚
 
 当提交发生了错误的时候可以使用`git revert`回滚到指定的提交。
@@ -93,7 +98,6 @@ git reset --hard // 重设这个时候处于暂存区的文件 b.js 将不会在
 根据[Gitbook](https://git-scm.com/book/en/v2/Git-Branching-Rebasing)的描述:
 
 > 如果是本地的更改使用`rebase`如果是和他人共享的提交出去分支就不要使用`merge`。
-
 
 ## 拉取及合并
 
@@ -123,6 +127,12 @@ git reset --hard // 重设这个时候处于暂存区的文件 b.js 将不会在
 ## 提交引用 
 
 `git show commitID`显示提交 id 的信息。
+
+## 比较分支不同
+
+`git diff` 比较工作环境和暂存区的不同，`git diff --staged` 比较暂存区和上次最新的提交的不同。`git diff master branchB` 比较两个提交的不同。
+`git diff origin/test a.txt` 比较远程分支上的文件和现在的文件的不同。
+
 ## 分支
 
 `git branch -m <branch>`重命名当前分支
@@ -138,8 +148,6 @@ git fetch remote remotebranch
 git co -b new-branch remote/remotebranch
 ```
 `git push origin --delete [分支名]`和`git push 远程名 :[分支名]`删除远程分支。
-
-## Reset、Checkout、Revert
 
 
 ## Pull Request
