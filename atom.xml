@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2017-12-17T04:26:37.000Z</updated>
+  <updated>2017-12-23T05:02:22.083Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,35 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>任务，微任务，队列，计划</title>
+    <link href="http://yoursite.com/2017/12/21/%E4%BB%BB%E5%8A%A1%EF%BC%8C%E5%BE%AE%E4%BB%BB%E5%8A%A1%EF%BC%8C%E9%98%9F%E5%88%97%EF%BC%8C%E8%AE%A1%E5%88%92/"/>
+    <id>http://yoursite.com/2017/12/21/任务，微任务，队列，计划/</id>
+    <published>2017-12-21T15:34:13.000Z</published>
+    <updated>2017-12-23T05:02:22.083Z</updated>
+    
+    <content type="html"><![CDATA[<p>今天看了一篇文章讲述的关于任务，微任务，队列之类的文章觉得非常有用在这里谨添加上自己的理解，原文在<a href="https://jakearchibald.com/2015/tasks-microtasks-queues-and-schedules/" target="_blank" rel="external">这里</a>。</p><p>Task,Microtask,queues,schedules在这里分别翻译成：任务，微任务，队列，计划。</p><p>以下代码输出什么？</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">console.log(&apos;script start&apos;);</div><div class="line"></div><div class="line">setTimeout(function() &#123;</div><div class="line">  console.log(&apos;setTimeout&apos;);</div><div class="line">&#125;, 0);</div><div class="line"></div><div class="line">Promise.resolve().then(function() &#123;</div><div class="line">  console.log(&apos;promise1&apos;);</div><div class="line">&#125;).then(function() &#123;</div><div class="line">  console.log(&apos;promise2&apos;);</div><div class="line">&#125;);</div><div class="line"></div><div class="line">console.log(&apos;script end&apos;);</div></pre></td></tr></table></figure><p>这道题目会出现在面试题之中，一般来说会输出：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">script start</div><div class="line">script end</div><div class="line">promise1</div><div class="line">promise2</div><div class="line">setTimeout</div></pre></td></tr></table></figure><p>为什么会这样呢？以下为摘抄自原文：</p><blockquote><p>每个线程都有其事件循环，所以每个 web worker(工作线程)也有。这样它就可以独立执行，但是同一个源上的所有窗口共享一个事件循环，因为他们可以同步通信。事件循环一直运行，执行排队的任务。一个事件循环拥有多个任务源以保证任务的顺序执行，但是浏览器在每次循环的时候会选择从哪个源选择任务来执行。这样允许浏览器优先执行对性能敏感的任务比如用户输入。</p><p><strong>任务</strong> 是浏览器可以从其中获取内部构件从而执行 JavaScript/DOM 作用域并且保证这些操作都顺序执行。在任务之间，浏览器可能会渲染更新。鼠标的点击事件回调，比如解析 HTML, setTimeout都会需要创建任务。<code>setTimeout</code> 是在一个时间间隔后为其回调安排一个任务。这样那个 <code>setTimeout(function() { console.log(&#39;setTimeout&#39;);}, 0)</code> 就会在<code>script end</code>最后输出。</p><p>微任务一般是指在当前执行脚本执行完毕的时候立即执行的任务，比如批量操作之后的动作，或者不以创建一个新任务的性能作为代价来让某些事件异步执行。微任务队列的执行时机是在回调之后执行的因为在这期间没有其它 JavaScript 脚本在执行，并且必须是在每个任务结束之前。在微任务运行期间添加的其它排队的微任务会添加在微任务队列的末尾并且执行。微任务包括 <code>mutation observer</code> 回调和 promise 回调。<br>MutationObserver是异步的。</p></blockquote><p>关于 Mutataion 可以查看<a href="https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver" target="_blank" rel="external">这里</a>。</p><p>当 promise 创建以后，会排入微任务队列中。所以 promise1 和 promise2 会在 setTimeout 之前输出，因为微任务问题会发生在下一个任务之前，当前任务结束之前。</p><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul><li>任务会顺序执行，浏览器会在任务之间渲染</li><li>微任务会顺序执行，执行时机是在每个回调之后并且期间没有其它 JavaScript 在执行并且必须是在每个任务结束之前</li></ul><p>这里有一个很有意思的地方是原文下文的评论有人提问的关于那个 <code>es6-promise</code> 兼容库使用的 <code>setImmediate</code> 和 <code>process.nextTick</code> 方法。前一个是属于任务，后一个差不多是微任务。那么如果写过 vue 的家伙应该对这个 nextTick 很熟悉吧？那么为什么 vue 的数据更新是异步的呢？因为他应该是用了 MutationObserver 所有的操作是异步缓存入队列再在一定的时间内 flush 到 DOM 中，如果使用 nextTick 意思即再插入一个微任务，这个微任务是在对 DOM 更新完毕后执行然后就可以获取到 DOM 更新后的元素内容。<strong>是这么理解的吗？</strong>。欢迎指正。</p><h2 id="疑问"><a href="#疑问" class="headerlink" title="疑问"></a>疑问</h2><p>原文说的微任务执行时机：</p><blockquote><p>after every callback, as long as no other JavaScript is mid-execution</p></blockquote><p>这里的回调指的是什么？是指每个 JavaScript 堆栈还是什么？不理解。</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;今天看了一篇文章讲述的关于任务，微任务，队列之类的文章觉得非常有用在这里谨添加上自己的理解，原文在&lt;a href=&quot;https://jakearchibald.com/2015/tasks-microtasks-queues-and-schedules/&quot; target=&quot;
+      
+    
+    </summary>
+    
+      <category term="FrontEnd" scheme="http://yoursite.com/categories/FrontEnd/"/>
+    
+    
+      <category term="microtask" scheme="http://yoursite.com/tags/microtask/"/>
+    
+      <category term="task" scheme="http://yoursite.com/tags/task/"/>
+    
+      <category term="event loop" scheme="http://yoursite.com/tags/event-loop/"/>
+    
+  </entry>
   
   <entry>
     <title>第五种定位属性</title>
@@ -90,9 +119,9 @@
       <category term="FrontEnd" scheme="http://yoursite.com/categories/FrontEnd/"/>
     
     
-      <category term="Mobile" scheme="http://yoursite.com/tags/Mobile/"/>
-    
       <category term="viewport" scheme="http://yoursite.com/tags/viewport/"/>
+    
+      <category term="Mobile" scheme="http://yoursite.com/tags/Mobile/"/>
     
   </entry>
   
@@ -117,9 +146,9 @@
       <category term="FrontEnd" scheme="http://yoursite.com/categories/FrontEnd/"/>
     
     
-      <category term="Mobile" scheme="http://yoursite.com/tags/Mobile/"/>
-    
       <category term="viewport" scheme="http://yoursite.com/tags/viewport/"/>
+    
+      <category term="Mobile" scheme="http://yoursite.com/tags/Mobile/"/>
     
   </entry>
   
