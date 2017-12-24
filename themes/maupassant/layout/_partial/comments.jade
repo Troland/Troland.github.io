@@ -1,3 +1,18 @@
+if theme.gitment.enable == true
+    #container
+    link(rel='stylesheet', href=url_for(theme.css) + '/default.css' + '?v=' + theme.version)
+    script(src=url_for(theme.js) + '/gitment.browser.js' + '?v=' + theme.version)
+    script.
+      var gitment = new Gitment({
+        owner: '#{theme.gitment.owner}',
+        repo: '#{theme.gitment.repo}',
+        oauth: {
+          client_id: '#{theme.gitment.client_id}',
+          client_secret: '#{theme.gitment.client_secret}',
+        },
+      })
+      gitment.render('container')
+
 if theme.duoshuo
   .ds-thread(data-thread-key=page.path, data-title=page.title, data-url=page.permalink, data-author-key='1')
 
@@ -36,7 +51,7 @@ if theme.disqus
 
 if theme.uyan
   #uyan_frame
-  script(type='text/javascript' src='http://v2.uyan.cc/code/uyan.js?uid=#{theme.uyan}')
+    script(src="http://v2.uyan.cc/code/uyan.js?uid=#{theme.uyan}")
 
 if theme.gentie
   .cloud-tie-wrapper#cloud-tie-wrapper

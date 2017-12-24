@@ -206,7 +206,58 @@ element2.onclick = doSomething;
 
 在[MDN上的currentTarget](https://developer.mozilla.org/en-US/docs/Web/API/Event/currentTarget)可以看到在**IE6-8**中是没有这个属性的。
 
-### 思考
+## 页面生命周期事件
+
+具体可查看[原文](https://javascript.info/onload-ondomcontentloaded)。
+
+页面生命周期事件有：DOMContentLoaded、load、beforeunload、unload。主要有三个重要的事件：
+
+- **DOMContentLoaded** 浏览器完全加载完 HTML 并且 DOM 树已经构建完毕但不包含外部加载的资源比如图片 img 标签和样式表。
+- **load** 浏览器加载完所有的资源比如图片、样式表
+- **beforeunload/unload** 当用户离开页面时候
+
+带有 async 或者 defer 属性的带有 src 属性的 script 标签不会阻塞 DOMContentLoaded 的渲染。
+`document.readyState` 有三种状态值
+
+- **loading** 文档在加载
+- **interactive** 文档完全读取
+- **complete** 文档完全读取并且其它资源比如图片完全加载
+
+打开[示例](http://plnkr.co/edit/nnol4v777qQJ2OnFDjDX?p=preview)理解这些事件的触发顺序。
+
+查看 `jQuery` [源码](https://github.com/jquery/jquery/blob/master/src/core/ready-no-deferred.js) 可以看到：
+
+```
+if ( document.readyState === "complete" ||
+	( document.readyState !== "loading" && !document.documentElement.doScroll ) ) {
+
+	// Handle it asynchronously to allow scripts the opportunity to delay ready
+	window.setTimeout( jQuery.ready );
+
+} else {
+
+	// Use the handy event callback
+	document.addEventListener( "DOMContentLoaded", completed );
+
+	// A fallback to window.onload, that will always work
+	window.addEventListener( "load", completed );
+}
+
+```
+
+可以看到上面用到的 `DOMContentLoaded` 和 `document.readyState`。
+总结如下：
+
+- **DOMContentLoaded** 当 DOM HTML 结构加载完毕形成 DOM 树，现在就执行脚本。
+- **onload** 事件当页面和所有资源都加载完毕。
+- **beforeunload** 在用户想离开页面时。
+- **unload** 用户确认离开页面。不能用延时或者提醒用户，少用。
+- **document.readyState** 文档当前状态，用 `readystatechange` 事件来取得。
+  - **loading** 文档加载
+  - **interactive** 文档完全解析，几乎和 **DOMContentLoaded** 一样的时机但在其之前。
+  - **complete** 文档和资源完全加载完毕，几乎和 **window.onload** 同时，但在其之前。
+
+## 思考
 
 Vue中有一个事件的修饰符`.self`是为了表示事件只能由当前的元素触发，而不能是其后代元素。
 

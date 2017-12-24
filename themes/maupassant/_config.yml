@@ -2,6 +2,12 @@ fancybox: true ## If you want to use fancybox please set the value to true.
 duoshuo:  ## Your duoshuo_shortname, e.g. username
 disqus:  ## Your disqus_shortname, e.g. username
 uyan: 2139658 ##uyanid
+gitment:
+  enable: false ## If you want to use Gitment comment system please set the value to true.
+  owner: Troland ## Your GitHub ID, e.g. username
+  repo: Troland.github.io ## The repository to store your comments, make sure you're the repo's owner, e.g. imsun.github.io
+  client_id: b53bd1a0f521a8f3baba ## GitHub client ID, e.g. 75752dafe7907a897619
+  client_secret: d36ea699e6155911a4c5b2666c18f61eb2d913c0 ## GitHub client secret, e.g. ec2fb9054972c891289640354993b662f4cccc50
 gentie: ##gentie
 google_search: true ## Use Google search, true/false.
 baidu_search: ## Use Baidu search, true/false.
