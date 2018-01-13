@@ -10,22 +10,22 @@ categories:
 ---
 
 最近公司有用 DCloud 的产品来开发 app 里面涉及到一些问题听我细细道来。
-推送使用的是个推平台，参见[官网](http://getui.com/cn/index.html)。这里分为[客户端](http://docs.getui.com/getui/more/plugin/)和[服务端](http://docs.getui.com/getui/more/plugin/)。DCloud 的 HBuilder 里面有集成推送的 sdk。
+推送使用的是个推平台，参见[官网](http://getui.com/cn/index.html)。这里分为[客户端](http://docs.getui.com/getui/more/plugin/)和[服务端](http://docs.getui.com/getui/more/plugin/)。DCloud的HBuilder里面有集成推送的 sdk。
 
 推送的步骤可参见官方[文档](http://ask.dcloud.net.cn/article/34)。
-大致的推送流程是：服务端发送推送 -> 个推平台会进行处理 -> App 的个推进程收到推送信息 -> App 进行消息处理和推送事件的监听。
+大致的推送流程是：服务端发送推送 -> 个推平台会进行处理 -> App 的个推进程收到推送信息 -> App进行消息处理和推送事件的监听。
 
 这里主要遇到的问题有如下：
 
 - 应该采用何种模板才能够让 ios 和 android 客户端都可以收到推送？
   
-  这里只能采用透传模板 TransmissionTemplate，查看个推官方 [FAQ](http://docs.getui.com/question/getui/ios/)
+  这里只能采用透传模板TransmissionTemplate，查看个推官方 [FAQ](http://docs.getui.com/question/getui/ios/)
   
-- 关于离线的信息的推送，android 和 ios 应该如何处理？
+- 关于离线的信息的推送，android和ios应该如何处理？
     
-  关于 android 的离线处理，我询问了安卓的小伙伴，得到的答复是无法保证离线状态下 android 可以收到推送。ios 则可以通 aps 苹果推送服务来得到推送信息。
+  关于android的离线处理，我询问了安卓的小伙伴，得到的答复是无法保证离线状态下android可以收到推送。ios则可以通aps苹果推送服务来得到推送信息。
   
-  这里有一个地方需要注意的是服务端在发送 ios 离线信息的时候需要在 `customMsg` 参数下添加传递到客户端的参数比如：
+  这里有一个地方需要注意的是服务端在发送ios离线信息的时候需要在`customMsg`参数下添加传递到客户端的参数比如：
   
   ```
     let payload = new APNPayload();
@@ -39,9 +39,9 @@ categories:
     payload.customMsg.body = "rolman";
   ```
   
-  ios 当 app 在线的时候会通过 `receive` 事件创建消息到消息中心，若离线则通过苹果 aps 推送到消息中心。
+  ios当app在线的时候会通过`receive`事件创建消息到消息中心，若离线则通过苹果aps推送到消息中心。
   
-  需要注意的是： **ios 的消息展示方式，这里统一为不管 app 是在前台还是后台都是把推送消息显示在消息中心，这样就和 android 的信息展示方式统一。**
+  需要注意的是： **ios的消息展示方式，这里统一为不管app是在前台还是后台都是把推送消息显示在消息中心，这样就和android的信息展示方式统一。**
  
 - 在 ios app 登记的时候必须是苹果推服务证书！否则无法通过 aps 接收推送信息。
    
