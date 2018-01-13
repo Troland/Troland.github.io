@@ -1,7 +1,7 @@
 fancybox: true ## If you want to use fancybox please set the value to true.
 duoshuo:  ## Your duoshuo_shortname, e.g. username
-disqus:  ## Your disqus_shortname, e.g. username
-uyan: 2139658 ##uyanid
+disqus:  troland ## Your disqus_shortname, e.g. username
+uyan:  ##uyanid 2139658
 gitment:
   enable: false ## If you want to use Gitment comment system please set the value to true.
   owner: Troland ## Your GitHub ID, e.g. username
