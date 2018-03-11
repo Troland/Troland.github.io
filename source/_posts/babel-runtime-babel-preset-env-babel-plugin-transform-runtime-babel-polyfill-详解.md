@@ -488,7 +488,7 @@ npm i babel-runtime
   
 - useESModules*
  
-  默认 false。当启用的时候转换插件就不会使用经过`@babel/plugin-transform-modules-commonjs`处理的工具函数。这样有利于为诸如 webpack 的模块构建系统减少构建包的大小，因为 webpack 不需要保存 commonjs 的语法。
+  默认 false，当启用的时候转换插件就不会使用经过 **@babel/plugin-transform-modules-commonjs** 处理的工具函数。这样有利于为诸如 webpack 的模块构建系统减少构建包的大小，因为 webpack 不需要保存 commonjs 的语法。
   
 ## babel-plugin-transform-runtime，babel-preset-env，babel-polyfill 的使用
   
@@ -576,16 +576,16 @@ npm i babel-runtime
     
     ```
     class Person {}
-    
+        
     let a = new Promise(function (resolve, reject) {
         console.log('Promise');
         resolve();
     });
-    
+        
     a.then(function () {
         console.log('resolved.');
     });
-    
+        
     console.log('Hi');
     ```
     
@@ -597,7 +597,7 @@ npm i babel-runtime
     
     require("core-js/modules/es6.promise");
     
-    function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+    function _classCallCheck(instance, Constructor) { if (!(instance instanceofConstructor)) { throw new TypeError("Cannot call a class as a function"); } }
     
     var Person = function Person() {
       _classCallCheck(this, Person);
@@ -783,7 +783,8 @@ npm i babel-runtime
     console.log('Hi');
     ```
     
-    可以看到上面的`Promise`并没有污染全局的`Promise`而是引用了`@babel/runtime/core-js/promise`。
+    可以看到上面的**Promise**并没有污染全局的**Promise**而是引用了**@babel/runtime/core-js/promise**。
+    
     例五
     
     .babelrc：
@@ -930,7 +931,7 @@ npm i babel-runtime
     console.log('Hi');
     ```
     
-    当 @babel/preset-env 中的 useBuiltIns 为`false` 的时候和`usage`是一样的（但是必须是 test.js 中没有有import polyfill）。
+    当 @babel/preset-env 中的 useBuiltIns 为 false 的时候和 usage 是一样的（但是必须是 test.js 中没有有 import polyfill）。
     
   - Babel 6
     
@@ -1321,16 +1322,19 @@ npm i babel-runtime
     require('babel-polyfill');
     ```
     
-    当设置 .babelrc 中 useBuiltIns 为 true 并且`test.js`中添加
+    当设置 .babelrc 中 useBuiltIns 为 true 并且 test.js 中添加
     
     ```
-    import "babel-polyfill";
+    import "babel-polyfill"
     ```
     
     则输出会多
     
     ```
+    require('core-js/modules/es6.typed.int16-array');
+    require('core-js/modules/es6.typed.uint16-array');
     require('core-js/modules/es6.typed.array-buffer');
+    ...还有其它
     ```
     
   ## 总结
