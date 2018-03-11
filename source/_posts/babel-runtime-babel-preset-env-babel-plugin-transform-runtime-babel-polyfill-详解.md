@@ -1343,7 +1343,7 @@ npm i babel-runtime
   
   当`test.js`中有**import "babel-polyfill";**的时候，Babel 6 版本的**"useBuiltIns": true**即是 Babel 7 的**"useBuiltIns": "entry"**。
   
-  在 Babel 7 中即使是源文件中不写**import "@babel/polyfill";**当设置**"useBuiltIns": "usage"**会根据情况输出**"@babel/polyfill"**的输出。
+  在 Babel 7 中即使是源文件中不写**import "@babel/polyfill";**当设置**"useBuiltIns": "usage"**会根据情况输出**"@babel/polyfill"**对应兼容插件的输出。
   
   安装`babel-polyfill`。
   
