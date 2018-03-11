@@ -128,7 +128,7 @@
 <p>默认为 false。当启用的意思即当使用工具函数的时候不再引用<code>core-js</code>中的兼容插件。</p>
 </li>
 <li><p>useESModules*</p>
-<p>默认 false。当启用的时候转换插件就不会使用经过<code>@babel/plugin-transform-modules-commonjs</code>处理的工具函数。这样有利于为诸如 webpack 的模块构建系统减少构建包的大小，因为 webpack 不需要保存 commonjs 的语法。</p>
+<p>默认 false，当启用的时候转换插件就不会使用经过 <strong>@babel/plugin-transform-modules-commonjs</strong> 处理的工具函数。这样有利于为诸如 webpack 的模块构建系统减少构建包的大小，因为 webpack 不需要保存 commonjs 的语法。</p>
 </li>
 </ul>
 <h2 id="babel-plugin-transform-runtime，babel-preset-env，babel-polyfill-的使用"><a href="#babel-plugin-transform-runtime，babel-preset-env，babel-polyfill-的使用" class="headerlink" title="babel-plugin-transform-runtime，babel-preset-env，babel-polyfill 的使用"></a>babel-plugin-transform-runtime，babel-preset-env，babel-polyfill 的使用</h2><p>  这三个插件是如何配合的？这里主要是因为 Babel 7 和 Babel 6，会造成一些区别，分情况来说明吧。</p>
