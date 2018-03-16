@@ -15,6 +15,8 @@ categories:
 
 > 它是一个编译器可以让你使用最新版本的`ES`规范比如`ES2015（ES6）`，`ES2016（ES7）`，`ES2017（ES8）`的写法并把它编译成老的`ES5`的写法。
 
+babel-core 是 babel 的编译器核心。
+
 意思即你可以使用最新的`JavaScript`规范的写法比如`async`等来写代码，然后`Babel`会帮你编译成`ES5`以兼容老旧的浏览器。
 
 转换前：
@@ -783,7 +785,7 @@ npm i babel-runtime
     console.log('Hi');
     ```
     
-    可以看到上面的**Promise**并没有污染全局的**Promise**而是引用了**@babel/runtime/core-js/promise**。
+    可以看到上面的 Promise 并没有污染全局的 Promise 而是引用了 @babel/runtime/core-js/promise。
     
     例五
     
