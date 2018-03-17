@@ -551,7 +551,7 @@ npm i babel-runtime
     ```
     运行 npm run babel 即可。
     
-    例一
+    **例一**
     
     .babelrc：
     
@@ -573,7 +573,6 @@ npm i babel-runtime
       ],
     }
     ```
-    
     test.js 内容如下：
     
     ```
@@ -590,11 +589,9 @@ npm i babel-runtime
         
     console.log('Hi');
     ```
-    
     test-compiled.js
     
     ```
-    
     "use strict";
     
     require("core-js/modules/es6.promise");
@@ -613,18 +610,14 @@ npm i babel-runtime
       console.log('resolved.');
     });
     console.log('Hi');
-    
     ```
-    
     可以看到上面是把 test.js 在目标浏览器环境下是通过引用 polyfill 的方式。
-    
     ```
     require("core-js/modules/es6.promise")
     ```
-    
     这里如果不想要用 commonjs 的方式引入兼容的插件可以设置 modules 参数。
     
-    例二
+    **例二**
     
     .babelrc：
     
@@ -644,7 +637,6 @@ npm i babel-runtime
       ],
     }
     ```
-    
     test.js
     
     ```
@@ -663,7 +655,6 @@ npm i babel-runtime
     
     console.log('Hi');
     ```
-    
     test-compiled.js：
     
     ```
@@ -689,10 +680,8 @@ npm i babel-runtime
       console.log('resolved.');
     });
     console.log('Hi');
-
     ```
-    
-    例三
+    **例三**
     
     当设置 useBuiltIns 为 false 的时候的输出。
     test.js：
@@ -713,7 +702,6 @@ npm i babel-runtime
     
     console.log('Hi');
     ```
-    
     test-compiled.js：
     
     ```
@@ -736,8 +724,7 @@ npm i babel-runtime
     });
     console.log('Hi');
     ```
-    
-    例四
+    **例四**
     
     .babelrc：
     
@@ -750,7 +737,6 @@ npm i babel-runtime
       ],
     }
     ```
-    
     test.js
     
     ```
@@ -767,7 +753,6 @@ npm i babel-runtime
     
     console.log('Hi');
     ```
-    
     test-compiled.js：
     
     ```
@@ -784,10 +769,9 @@ npm i babel-runtime
     });
     console.log('Hi');
     ```
-    
     可以看到上面的 Promise 并没有污染全局的 Promise 而是引用了 @babel/runtime/core-js/promise。
     
-    例五
+    **例五**
     
     .babelrc：
     
@@ -812,7 +796,6 @@ npm i babel-runtime
       ],
     }
     ```
-    
     test.js：
     
     ```
@@ -829,7 +812,6 @@ npm i babel-runtime
     
     console.log('Hi');
     ```
-    
     test-compiled.js：
     
     ```
@@ -850,8 +832,7 @@ npm i babel-runtime
     });
     console.log('Hi');
     ```
-    
-    例六
+    **例六**
     
     .babelrc：
     
@@ -876,7 +857,6 @@ npm i babel-runtime
       ],
     }
     ```
-    
     test.js：
     
     ```
@@ -895,7 +875,6 @@ npm i babel-runtime
     
     console.log('Hi');
     ```
-    
     test-compiled.js：
     
     ```
@@ -932,12 +911,12 @@ npm i babel-runtime
     });
     console.log('Hi');
     ```
-    
     当 @babel/preset-env 中的 useBuiltIns 为 false 的时候和 usage 是一样的（但是必须是 test.js 中没有有 import polyfill）。
     
   - Babel 6
     
-    例一
+    **例一**
+    
     .babelrc：
     
     ```
@@ -956,7 +935,6 @@ npm i babel-runtime
       ],
     }
     ```
-    
     test.js：
     
     ```
@@ -973,7 +951,6 @@ npm i babel-runtime
     
     console.log('Hi');
     ```
-    
     test-compiled.js：
     
     ```
@@ -996,8 +973,7 @@ npm i babel-runtime
     
     console.log('Hi');
     ```
-    
-    例二
+    **例二**
     
     .babelrc 同例一。
     test.js：
@@ -1017,7 +993,6 @@ npm i babel-runtime
     
     console.log('Hi');
     ```
-    
     test-compiled.js：
     
     ```
@@ -1056,10 +1031,10 @@ npm i babel-runtime
     
     console.log('Hi');
     ```
-    
-    例三
+    **例三**
     
     .babelrc：
+    
     ```
     {
       "presets": [
@@ -1076,7 +1051,6 @@ npm i babel-runtime
       ],
     }
     ```
-    
     test.js 同例二。
     test-compiled.js：
     
@@ -1101,12 +1075,11 @@ npm i babel-runtime
     });
     
     console.log('Hi');
-
     ```
-    
-    例四
+    **例四**
     
     .babelrc：
+    
     ```
     {
       "plugins": [
@@ -1115,6 +1088,7 @@ npm i babel-runtime
     }
     ```
     test.js：
+    
     ```
     class Person {}
 
@@ -1129,7 +1103,6 @@ npm i babel-runtime
     
     console.log('Hi');
     ```
-    
     test-compiled.js：
     
     ```
@@ -1148,11 +1121,11 @@ npm i babel-runtime
     
     console.log('Hi');
     ```
-    
-    例五
+    **例五**
     
     .babelrc 和例四一样。
     test.js：
+    
     ```
     import "babel-polyfill";
     class Person {}
@@ -1168,7 +1141,6 @@ npm i babel-runtime
     
     console.log('Hi');
     ```
-    
     test-compiled.js：
     
     ```
@@ -1187,10 +1159,10 @@ npm i babel-runtime
     
     console.log('Hi');
     ```
-    
-    例六
+    **例六**
     
     .babelrc：
+    
     ```
     {
       "plugins": [
@@ -1210,7 +1182,6 @@ npm i babel-runtime
       ],
     }
     ```
-    
     test.js：
     
     ```
@@ -1228,7 +1199,6 @@ npm i babel-runtime
     
     console.log('Hi');
     ```
-    
     test-compiled.js：
     
     ```
@@ -1270,8 +1240,7 @@ npm i babel-runtime
     
     console.log('Hi');
     ```
-    
-    例七
+    **例七**
 
     .babelrc 和例六一样。
     test.js和例六比去掉
@@ -1310,26 +1279,22 @@ npm i babel-runtime
     
     console.log('Hi');
     ```
-    
     设置 .babelrc 中 useBuiltIns 为 false 和上面是一样的结果。
     当设置 .babelrc 中 useBuiltIns 为 false 并且`test.js`中添加
     
     ```
     import "babel-polyfill";
     ```
-    
     则输出会多一句
     
     ```
     require('babel-polyfill');
     ```
-    
     当设置 .babelrc 中 useBuiltIns 为 true 并且 test.js 中添加
     
     ```
     import "babel-polyfill"
     ```
-    
     则输出会多
     
     ```
@@ -1338,14 +1303,13 @@ npm i babel-runtime
     require('core-js/modules/es6.typed.array-buffer');
     ...还有其它
     ```
-    
   ## 总结
   
-  **这里有一个非常重要的问题就是关于 transform-runtime [官方文档](https://babeljs.io/docs/plugins/transform-runtime/#core-js-aliasing)上写的关于有些方法必须使用 babel-polyfill 中的方法。**
+  **这里有一个非常重要的问题就是关于transform-runtime[官方文档](https://babeljs.io/docs/plugins/transform-runtime/#core-js-aliasing)上写的关于有些方法必须使用 babel-polyfill 中的方法。**
   
   **那么这样导致的结果就是如果是在 Babel 6 中的时候当在源文件中写上**"foobar".includes("foo")**就必须写上_import "babel-polyfill";_。**
   
-  **但是Babel 7就不需要在源文件中写_import "@babel/polyfill";_会智能判断是否需要去引用这个`includes`的 polyfill。**
+  **但是 Babel 7 就不需要在源文件中写`_import "@babel/polyfill";_`会智能判断是否需要去引用这个`includes`的 polyfill。**
   
   当`test.js`中有**import "babel-polyfill";**的时候，Babel 6 版本的**"useBuiltIns": true**即是 Babel 7 的**"useBuiltIns": "entry"**。
   
@@ -1373,10 +1337,10 @@ npm i babel-runtime
     ],
   }
   ```
-  
   Babel 6
   
-  如果有使用
+  如果有使用 babel-polyfill。
+  
   ```
   {
     "plugins": [
@@ -1395,7 +1359,6 @@ npm i babel-runtime
     ],
   }
   ```
-  
   Babel 6 webpack 中的配置：
   
   ```
@@ -1422,7 +1385,6 @@ npm i babel-runtime
     }
   };
   ```
-  
   Babel 7 webpack 配置：
   
   ```
@@ -1447,4 +1409,3 @@ npm i babel-runtime
     }
   };
   ```
-  
