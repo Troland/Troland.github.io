@@ -33,7 +33,7 @@
 <p>这会导致布局视口的高度受到影响，大体上会比纵向模式要小。但是开发者并不开心高度而只关心宽度。</p>
 <p><img src="/images/mobile_layoutviewport_la.jpg" alt=""></p>
 <h2 id="布局视口的分辨率"><a href="#布局视口的分辨率" class="headerlink" title="布局视口的分辨率"></a>布局视口的分辨率</h2><p>现在要测量这两个视口的分辨率。多亏了浏览器大战给予我们的两个属性对。</p>
-<p><code>document.documentElement.clientWidth</code> 和 <code>-Height</code> 包含了视口的分辨率。</p>
+<p><code>document.documentElement.clientWidth</code> 和 <code>Height</code> 包含了视口的分辨率。</p>
 <p><img src="/images/mobile_client.jpg" alt=""></p>
 <p>当更改方向的话只是高度改变了，宽度不变。</p>
 <p><img src="/images/mobile_client_la.jpg" alt=""></p>
@@ -43,15 +43,16 @@
 <h2 id="屏幕"><a href="#屏幕" class="headerlink" title="屏幕"></a>屏幕</h2><p>在桌面浏览器中，<code>screen.width/height</code> 以设备像素为单位输出屏幕大小。在桌面端，作为开发进行你从来不关心这个信息。你只是关心在其上有多少像素的样式而不是屏幕的物理大小。</p>
 <p><img src="/images/mobile_screen.jpg" alt=""></p>
 <h2 id="缩放的比例"><a href="#缩放的比例" class="headerlink" title="缩放的比例"></a>缩放的比例</h2><p>直接读取缩放的比例是不可能的，但你可以通过 <code>window.innerWidth / screen.width</code> 来获得。当然这必须是两个属性都被支持的情况下。</p>
-<p>幸运的是缩放比例并不重要。你只需要关心屏幕上有多少 CSS 像素即可。如果浏览器支持用 <code>window.innerWidth</code> 来获得。</p>
-<h2 id="滚动位移"><a href="#滚动位移" class="headerlink" title="滚动位移"></a>滚动位移</h2><p>你也需要知道视觉视口相对于布局视口的坐标即滚动位移，在桌面端是存储在 <code>window.pageX/pageY</code>中。</p>
+<p>幸运的是缩放比例并不重要。你只需要关心屏幕上有多少<code>CSS</code>像素即可。如果浏览器支持用 <code>window.innerWidth</code> 来获得。</p>
+<h2 id="滚动位移"><a href="#滚动位移" class="headerlink" title="滚动位移"></a>滚动位移</h2><p>你也需要知道视觉视口相对于布局视口的坐标即滚动位移，在桌面端是存储在<code>window.pageX/pageY</code>中。</p>
 <p><img src="/images/mobile_page.jpg" alt=""></p>
 <h2 id="html-元素"><a href="#html-元素" class="headerlink" title="html 元素"></a>html 元素</h2><p>在桌面端，<code>document.documentElement.offsetWidth/Height</code> 获得 <code>html</code> 元素的 CSS 像素的总大小。</p>
 <p><img src="/images/mobile_offset.jpg" alt=""></p>
-<h2 id="媒体查询"><a href="#媒体查询" class="headerlink" title="媒体查询"></a>媒体查询</h2><p>媒体查询和桌面端保持一致。<code>width/height</code> 使用布局视口作为参考 并且是以样式像素为单位，<code>device-width/height</code> 使用设备屏幕并且以设备像素来测算。</p>
+<h2 id="媒体查询"><a href="#媒体查询" class="headerlink" title="媒体查询"></a>媒体查询</h2><p>媒体查询和桌面端保持一致。<code>width/height</code>使用布局视口作为参考并且是以样式像素为单位，<code>device-width/height</code> 使用设备屏幕并且以设备像素来测算。</p>
 <p>换句话说，<code>width/height</code> 表示 <code>document.documentElement.clientWidth/Height</code> 即布局视口的值，然而 <code>device-width/height</code> 表示 <code>screen.width/height</code>。(在所有浏览器均有效，即使表示的值不正确)。</p>
 <p><img src="/images/mobile_mediaqueries.jpg" alt=""></p>
-<p>那么对于开发者来说哪种计算方式更加有用呢？答案是，不知道。<br>起先我认为 <code>device-width</code> 会是更加重要的，因为它提供了设备更多的信息以便我们使用。比如，你会调整你的布局的宽度来适配设备的宽度。但是其实你可以就不用 <code>&lt;meta view-port&gt;</code> 标签，并不一定要在媒体查询中使用 <code>device-width</code>。</p>
+<p>那么对于开发者来说哪种计算方式更加有用呢？答案是，不知道。</p>
+<p>起先我认为 <code>device-width</code> 会是更加重要的，因为它提供了设备更多的信息以便我们使用。比如，你会调整你的布局的宽度来适配设备的宽度。但是其实你可以就不用 <code>&lt;meta view-port&gt;</code> 标签，并不一定要在媒体查询中使用 <code>device-width</code>。</p>
 <p>那么最终 <code>width</code> 会是更加重要的媒体查询吗？可能，它为浏览器产商提供了其认为的在这个设备上一个网站的合适的宽度的线索。但是是相当模糊的是，<code>width</code> 属性实际上并没有提供其它信息了。</p>
 <p>所以我没下定论。我只是觉得媒体查询用来区分你是在桌面，平板或者移动端相当有用，但是在区分各种各样的平板和移动设备上却并不是那么有用。</p>
 <h2 id="事件坐标"><a href="#事件坐标" class="headerlink" title="事件坐标"></a>事件坐标</h2><p>事件坐标在桌面端基本上是有效的。然而不幸的是，12 个被测试的浏览器中只有两个浏览器，塞班 WebKit 和 Iris, 得出了三个完全准确的属性值。其它浏览器都或多或少的严重问题。</p>
@@ -68,10 +69,10 @@
 <p>(安卓的 WebKit是个意外，它会减小包含文字的元素的大小以适配屏幕。这是明智的，我觉得其它浏览器产商应该复制这一行为。</p>
 <p>现在你可以设置 <code>html {width: 320px}</code>。现在 <code>&lt;html&gt;</code> 元素收缩，其它元素现在也适配于是 320px 的宽度。但是当用户面对一个缩小到基本没有内容的时候并不是一开始时就会产生效果除非用户放大的时候这才会有用。</p>
 <p><img src="/images/mq_html300.jpg" alt=""></p>
-<p>为了解决这个问题苹果发明了视口元标签。当你设置 <code>&lt;meta name=&quot;viewport&quot; content=&quot;width=320&quot;&gt;</code> 你设置布局视口的宽度为 320px。现在页面的初始状态是正确的。</p>
+<p>为了解决这个问题苹果发明了视口元标签。当你设置<code>&lt;meta name=&quot;viewport&quot; content=&quot;width=320&quot;&gt;</code>你设置布局视口的宽度为 320px。现在页面的初始状态是正确的。</p>
 <p><img src="/images/mq_yes.jpg" alt=""></p>
-<p>你可以设置布局视口为任意的分辨率，包括 <code>device-width</code>.<code>device-width</code> 引用的是 <code>screen.width</code> 并且相应地调整布局视口 的大小。</p>
-<p>有一个特殊情况。有时候准确的 <code>screen.width</code> 并没多大用处因为像素值太高了。举个例子，谷歌的 Nexus One 准确宽度是 480px，但是谷歌工程师认为当使用 <code>device-width</code> 赋值一个 480px 宽的布局视口显得太大了。所以他们决定缩小到之前的 2/3 大小，所以 <code>device-width</code> 变成 320px，和 iPhone一样。</p>
+<p>你可以设置布局视口为任意的分辨率，包括<code>device-width</code>。<code>device-width</code>引用的是<code>screen.width</code>并且相应地调整布局视口 的大小。</p>
+<p>有一个特殊情况。有时候准确的<code>screen.width</code>并没多大用处因为像素值太高了。举个例子，谷歌的 Nexus One 准确宽度是 480px，但是谷歌工程师认为当使用 <code>device-width</code> 赋值一个 480px 宽的布局视口显得太大了。所以他们决定缩小到之前的 2/3 大小，所以 <code>device-width</code> 变成 320px，和 iPhone一样。</p>
 <p>据说，新苹果会拥有更高的像素值(并不一定是要更大的屏幕)。苹果复制这一行为我并不感到惊讶。或许最后 <code>device-width</code> 还是 320px呢。</p>
 <p>最后还有一些相关的研究文章，在这就不一一写出了。</p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>那么，这里个人的感觉就是一直不是明白这个移动端的渲染策略，现在明白了个大概，当没有设置 <code>&lt;meta name=&quot;viewport&quot;&gt;</code> 的时候会自动完全缩小以适配到视觉视口的大小。然后最形象的还是开头的那个相框里面的画，当你拿得越远的时候就会看到整幅画，当你离得越近的时候就只会看清某一部分。越远即缩小，越近即放大。视觉视口大小是会改变的，而布局视口是不变的。</p>

@@ -1,13 +1,13 @@
 <!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="Frontend, Mobile, Nodejs, Life Essays, etc."><title>两种视口的故事系列之一 | Poeticlife</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/3.0.3/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.0/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/2.2.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">两种视口的故事系列之一</h1><a id="logo" href="/.">Poeticlife</a><p class="description">大知闲闲，小知间间；大言炎炎，小言詹詹</p></div><div id="nav-menu"><a href="/." class="current"><i class="fa fa-home"> 首页</i></a><a href="/categories/Tech/"><i class="fa fa-wrench"> 技术</i></a><a href="/categories/Essays/"><i class="fa fa-pencil"> 随笔</i></a><a href="/categories/works/"><i class="fa fa-briefcase"> 作品</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div id="layout" class="pure-g"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">两种视口的故事系列之一</h1><div class="post-meta">Dec 3, 2017<span> | </span><span class="category"><a href="/categories/FrontEnd/">FrontEnd</a></span><script src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js" async></script><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> Hits</span></span></div><a data-disqus-identifier="2017/12/03/两种视窗的故事系列之一/" href="/2017/12/03/两种视窗的故事系列之一/#disqus_thread" class="disqus-comment-count"></a><div class="post-content"><p>关于视口即 <strong>viewport</strong> 的论述，本文章主要翻译自 <a href="https://www.quirksmode.org/mobile/viewports.html" target="_blank" rel="external">A tale of two viewports</a>。</p>
 <blockquote>
-<p>在这个系列中将会阐述视口和各种重要元素比如 <code>html</code> 元素的宽度的显示机制，当然还包括 <code>window</code> 和 <code>screen</code> 元素。</p>
+<p>在这个系列中将会阐述视口和各种重要元素比如 html 元素的宽度的显示机制，当然还包括 window 和 screen 元素。</p>
 </blockquote>
-<p>本篇文章主要讲述的是桌面浏览器，然而主要上的是为讲解移动浏览器所作的铺垫。大多数开发人员可可能将会直观地理解大多数桌面浏览器的概念。<br>在移动端中我们将会发现同样但更加复杂的概念，而事先基于大家都理解的概念进行讨论将会极大在帮助你理解移动端浏览器。</p>
+<p>本篇文章主要讲述的是桌面浏览器，主要是为理解移动浏览器所作的铺垫。大多数开发人员可能对大多数桌面浏览器的概念会比较了解些。<br>在移动端中我们将会发现同样但更加复杂的概念，而事先基于大家都理解的概念进行讨论将会更好地帮助你理解移动端浏览器。</p>
 <h2 id="概念：设备像素和-CSS-像素"><a href="#概念：设备像素和-CSS-像素" class="headerlink" title="概念：设备像素和 CSS 像素"></a>概念：设备像素和 CSS 像素</h2><p>CSS 像素和设备像素是不同的概念。</p>
-<p>设备像素指的是那种可以直观地看到的正确的大小。这种像确定了你所在的设备的准确的分辨率，可以使用 <code>screen.width</code> 和 <code>screen.height</code> 读取出来。</p>
-<p>如果设定元素的宽度为 <code>width: 128px</code>，而你的显示器是 1024px 宽，当你最大化你的浏览器的时候，元素会放大8倍以适配到你的显示器。</p>
+<p>设备像素指的是那种可以直观地看到的正确的大小。这种像素确定了你所在的设备的准确的分辨率，可以使用 <code>screen.width</code> 和<code>screen.height</code> 来取值。</p>
+<p>如果设定元素的宽度为 <code>width: 128px</code>，而你的显示器是 <code>1024px</code> 宽，当你最大化你的浏览器的时候，元素会放大8倍以适配到你的显示器。</p>
 <p>如果用户使用放大，计算将会改变。如果放大 2 倍, 宽度为 128px 的元素在 1024px 的显示器上只会适配到 4 倍大小。</p>
-<p>放大在现代浏览器即扩张了像素的大小。并不是元素的宽度由 128 变为 256像素；相反是像素点放大了 2 倍大小。实际上元素还是 128px 宽度，即使他占用了 256px 的空间。</p>
+<p>放大在现代浏览器中的展示方式即为拉伸了像素的大小。意思即是并不是元素的宽度由 128 变为 256 像素；相反是像素点放大了 2 倍大小。实际上元素还是 128px 宽度，即使他占用了 256px 的空间。</p>
 <p>换句话说，放大到 2 倍让一个 CSS 像素变为设备像素的 4 倍（宽度的 2 倍，高度的 2 倍得到 4 倍）。</p>
 <p>以下图片可以说明这种概念。4 像素在 100% 缩放。CSS 像素完全和设备像素重叠。</p>
 <p><img src="/images/csspixels_100.gif" alt=""></p>
@@ -15,16 +15,16 @@
 <p><img src="/images/csspixels_out.gif" alt=""></p>
 <p>当你放大的时候，会发生相反的情况。CSS 像素开始增大，现在一个 CSS 像素是几个设备像素重叠。</p>
 <p><img src="/images/csspixels_in.gif" alt=""></p>
-<p>这里想指明的是你只需关注 CSS像素，这是你的样式表所渲染出来的。</p>
-<p>设备像素基本上对你和用户是无用的。用户会缩放到自己认为适合阅读的样子。浏览器会自动让你的 CSS 样式放大或缩小。</p>
+<p>这里想指明的是你只需关注 CSS 像素，这是你的样式表所渲染出来的。</p>
+<p>对于你和用户来说，设备像素基本上是毫无意义的。用户会缩放到自己认为适合阅读的样子。然而，缩放的水平和你没有半点干系。浏览器会自动让你的 CSS 样式放大或缩小。</p>
 <h2 id="100-缩放"><a href="#100-缩放" class="headerlink" title="100% 缩放"></a>100% 缩放</h2><p>100% 缩放即 1 CSS 像素等于 1 设备像素。</p>
-<p>100% 缩放对于接下来的阐述很有用，但是你无需在日常生活中过度担心。在桌面端即使用户放大或者缩小 CSS 像素会保证你的布局等比缩放。</p>
-<h2 id="屏幕大小"><a href="#屏幕大小" class="headerlink" title="屏幕大小"></a>屏幕大小</h2><p>指的是用户显示器的大小而不是浏览器的。可以用 <code>screen.width</code> 和 <code>screen.height</code> 求出。这些像素是不可能改变的。</p>
+<p>100% 缩放对于接下来的阐述很有用，但是一般情况下你无需注意它。在桌面端即使用户放大或者缩小 CSS 像素会保证你的布局等比缩放。</p>
+<h2 id="屏幕大小"><a href="#屏幕大小" class="headerlink" title="屏幕大小"></a>屏幕大小</h2><p>指的是用户显示器的大小而不是浏览器的。可以用 <code>screen.width</code> 和 <code>screen.height</code> 取值。这些像素是设备像素是不可能改变的，这是显示器而不是浏览器的功能。</p>
 <p><img src="/images/desktop_screen.jpg" alt=""></p>
 <p>这些一般情况无用，只是对于网页统计网站有用。</p>
-<h2 id="窗口大小"><a href="#窗口大小" class="headerlink" title="窗口大小"></a>窗口大小</h2><p>如果你想要知道浏览器容器的内部大小。这些是你的 CSS 布局可使用的。可以使用 <code>window.innerWidth</code> 和 <code>window.innerHeight</code> 求出。</p>
+<h2 id="窗口大小"><a href="#窗口大小" class="headerlink" title="窗口大小"></a>窗口大小</h2><p>如果你想要知道浏览器容器的内部大小。这些是你的<code>CSS</code>布局可使用的。可以使用 <code>window.innerWidth</code> 和 <code>window.innerHeight</code> 求出。</p>
 <p><img src="/images/desktop_inner.jpg" alt=""></p>
-<p>很明显，浏览器窗口的内部宽度是用 CSS 像素来表示的。你需要知道你可以在浏览器窗口如何写布局，并且会随着用户的缩小而递减。当用户缩小你得到更少的可用的浏览器窗口空间，<code>window.innerWidth</code> 和 <code>window.innerHeight</code> 会减少。</p>
+<p>很明显，浏览器窗口的内部宽度是用 CSS 像素来表示的。你需要知道你可以在浏览器窗口如何写布局，并且会随着用户的缩小而递减。当用户缩小你得到更少的可用的浏览器窗口空间，<code>window.innerWidth</code>和<code>window.innerHeight</code>会随之减少。</p>
 <p><strong>（唯一的例外是 Opera, 当用户缩小的时候 <code>window.innerWidth/innerHeight</code> 并没有减少，而是用设备像素来计算）在桌面端会非常恼人，对于移动端是致命的。</strong></p>
 <p><img src="/images/desktop_inner_zoomed.jpg" alt=""></p>
 <p>高度和宽度都包含滚动条的高度和宽度。</p>
@@ -36,11 +36,9 @@
 <p><img src="/images/desktop_page_zoomed.jpg" alt=""></p>
 <h2 id="视口概念"><a href="#视口概念" class="headerlink" title="视口概念"></a>视口概念</h2><p>在介绍更多的 JavaScript 属性之前介绍一个概念：视口。</p>
 <p>视口是为了限制你最外层的元素 html。</p>
-<p>或者有一点模糊。举个例子。当你有一个流式布局然后其中一个侧边栏的宽度是 10%，当你调整浏览器窗口大小的时候侧边栏的大小也会跟着改变。其中的原理是什么呢？</p>
+<p>或者有一点模糊。举个例子。当你有一个流式布局然后其中一个侧边栏的宽度是　10%，当你调整浏览器窗口大小的时候侧边栏的大小也会跟着改变。其中的原理是什么呢？</p>
 <p>侧边是其父元素的宽度的 10%。这里是 <code>&lt;body&gt;</code> 元素，所有的块级元素都是其父元素的 100% 的宽度。<code>&lt;body&gt;</code> 元素的父元素是 <code>&lt;html&gt;</code>。</p>
-<p><code>&lt;html&gt;</code> 的宽度为浏览器的宽度。这就是为什么侧边栏是浏览器窗口的 10% 宽度的缘故。所有的开发者都可以很直观地明白。</p>
-<p>你所不知道的是，理论上，<code>&lt;html&gt;</code> 元素宽度是由视口所决定的。<code>&lt;html&gt;</code> 是 100% 的视口的宽度。</p>
-<p>视口被定义为浏览器窗口。但并不是一个 HTML 的结构的一部分，所以你无法用 CSS 来影响它。桌面端它拥有浏览器窗口的宽度和调试。在移动端则会更加复杂。</p>
+<p><code>&lt;html&gt;</code> 的宽度为浏览器的宽度。这就是为什么侧边栏是浏览器窗口的 10% 宽度的缘故。所有的开发者都可以很直观地明白。<br>你所不知道的是，理论上，<code>&lt;html&gt;</code> 元素宽度是由视口所决定的。<code>&lt;html&gt;</code> 是 100% 的视口的宽度。<br>视口被定义为浏览器窗口。但并不是一个 HTML 的结构的一部分，所以你无法用 CSS 来影响它。桌面端它拥有浏览器窗口的宽度和调试。在移动端则会更加复杂。</p>
 <h2 id="视口的影响"><a href="#视口的影响" class="headerlink" title="视口的影响"></a>视口的影响</h2><p>有些奇怪的问题。可以缩放 <a href="https://www.quirksmode.org/mobile/viewports.html" target="_blank" rel="external">该页面</a>。滚动到顶，然后缩小些浏览器窗口直到浏览器内容超出浏览器窗口。</p>
 <p>然后水平滚动到右边就会发现顶部的条没有正确地显示，空出一一块白色的区域，没有填满整个浏览器窗口。</p>
 <p><img src="/images/desktop_htmlbehaviour.jpg" alt=""></p>
@@ -60,22 +58,23 @@
 <p><img src="/images/desktop_client_smallpage.jpg" alt=""></p>
 <p>所以 <code>document.documentElement.clientWidth/Height</code> 总是会返回的是视口的分辨率，而不管 <code>html</code> 元素的分辨率。</p>
 <h2 id="两个属性值对"><a href="#两个属性值对" class="headerlink" title="两个属性值对"></a>两个属性值对</h2><p><code>window.innerWidth/Height</code> 也可以返回视口的分辨率。</p>
-<p>官方两者的主要区别是 <code>window.innerWidth/Height</code> 包括了滚动条而 <code>document.documentElement.clientWidth/Height</code> 并不包含。这真是让人有些摸不着头脑。</p>
-<p>这是由于浏览器大战的遗留问题。之前 Netscape 只支持 <code>window.innerWidth/Height</code>，而 IE 只支持 <code>document.documentElement.clientWidth/Height</code>，从那里起其它浏览器也开始支持 <code>document.documentElement.clientWidth/Height</code>，而 IE 不支持 <code>window.innerWidth/Height</code>。</p>
+<p>官方两者的主要区别是<code>window.innerWidth/Height</code>包括了滚动条而 <code>document.documentElement.clientWidth/Height</code>并不包含。这真是让人有些摸不着头脑。</p>
+<p>这是由于浏览器大战的遗留问题。之前 Netscape 只支持 <code>window.innerWidth/Height</code>，而IE只支持<code>document.documentElement.clientWidth/Height</code>，从那里起其它浏览器也开始支持 <code>document.documentElement.clientWidth/Height</code>，而IE不支持<code>window.innerWidth/Height</code>。</p>
 <p>在桌面端拥有这两个属性值对只有细微的影响然而在移动却不尽然。</p>
-<h2 id="测量-lt-html-gt-元素"><a href="#测量-lt-html-gt-元素" class="headerlink" title="测量 &lt;html&gt; 元素"></a>测量 <code>&lt;html&gt;</code> 元素</h2><p><code>clientWidth/Height</code> 测量视口的分辨率。用 <code>document.documentElement.offsetWidth/Height</code> 可以得出。</p>
+<h2 id="测量-lt-html-gt-元素"><a href="#测量-lt-html-gt-元素" class="headerlink" title="测量 &lt;html&gt; 元素"></a>测量 <code>&lt;html&gt;</code> 元素</h2><p><code>clientWidth/Height</code>测量视口的分辨率，用<code>document.documentElement.offsetWidth/Height</code> 可以得出。</p>
 <p><img src="/images/desktop_offset.jpg" alt=""></p>
 <p>这些属性会让你以块状元素的形式访问 <code>html</code> 元素；如果你设置 <code>html</code> 元素的宽度的时候就可以取得到值。</p>
 <p><img src="/images/desktop_offset_smallpage.jpg" alt=""></p>
 <h2 id="事件的坐标"><a href="#事件的坐标" class="headerlink" title="事件的坐标"></a>事件的坐标</h2><p>事件的坐标。当一个鼠标事件发生时，有不少于 5 个属性对会暴露给你为你提供准确的事件的坐标位置信息。这其中主要有三个是重要的：</p>
-<p>－ <code>pageX/Y</code> 会提供相对于 <code>html</code> 元素的坐标以 CSS 像素表示。<br>－　<code>clientX/Y</code> 提供相对于视口的坐标以 CSS 像素表示。</p>
 <ul>
+<li><code>pageX/Y</code> 会提供相对于 <code>html</code> 元素的坐标以 CSS 像素表示。</li>
+<li><code>clientX/Y</code> 提供相对于视口的坐标以 CSS 像素表示。</li>
 <li><code>screenX/Y</code> 提供相对于屏幕的坐标以 设备像素表示。</li>
 </ul>
 <p><img src="/images/desktop_pageXY.jpg" alt=""></p>
 <p>在 90% 的时间里，你会使用 <code>pageX/Y</code> 来获得事件发生的位置相对于文档的坐标。其它 10% 的时间你会使用 <code>clientX/Y</code>。你永远都不会想知道相对于屏幕的事件坐标。</p>
 <h2 id="媒体查询"><a href="#媒体查询" class="headerlink" title="媒体查询"></a>媒体查询</h2><p>最后稍微谈一下媒体查询。主要思路是这样的：你想要定义 CSS 样式规则当页面大于，等于，小于设定的大小的时候生效。比如：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">div.sidebar &#123;</div><div class="line">	width: 300px;</div><div class="line">&#125;</div><div class="line"></div><div class="line">@media all and (max-width: 400px) &#123;</div><div class="line">	// styles assigned when width is smaller than 400px;</div><div class="line">	div.sidebar &#123;</div><div class="line">		width: 100px;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">div.sidebar &#123;</div><div class="line">  width: 300px;</div><div class="line">&#125;</div><div class="line"></div><div class="line">@media all and (max-width: 400px) &#123;</div><div class="line">  // styles assigned when width is smaller than 400px;</div><div class="line">  div.sidebar &#123;</div><div class="line">    width: 100px;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>现在侧边栏是 300 像素，除了当页面宽度比 400 像素还要小的时候它变为 100 像素。</p>
 <p>现在的问题是这里的宽度是指的哪个元素？</p>
 <p>主要有两个相关的媒体查询语句：<code>width/height</code> 和 <code>device-width/device-height</code>。</p>
