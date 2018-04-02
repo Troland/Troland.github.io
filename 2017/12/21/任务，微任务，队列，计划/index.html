@@ -11,7 +11,7 @@
 <p>微任务一般是指在当前执行脚本执行完毕的时候立即执行的任务，比如批量操作之后的动作，或者不以创建一个新任务的性能作为代价来让某些事件异步执行。微任务队列的执行时机是在回调之后执行的因为在这期间没有其它 JavaScript 脚本在执行，并且必须是在每个任务结束之前。在微任务运行期间添加的其它排队的微任务会添加在微任务队列的末尾并且执行。微任务包括<code>mutation observer</code>回调和 promise 回调。<br>MutationObserver是异步的。</p>
 </blockquote>
 <p>关于 Mutataion 可以查看<a href="https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver" target="_blank" rel="external">这里</a>。</p>
-<p>当 promise 创建以后，会排入微任务队列中。所以 promise1 和 promise2 会在 setTimeout 之前输出，因为微任务问题会发生在下一个任务之前，当前任务结束之前。</p>
+<p>当 promise 创建以后，会排入微任务队列中。所以 promise1 和 promise2 会在 setTimeout 之前输出，因为微任务问题会发生在下一个任务之前，当前任务结束之后。</p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
 <li>任务会顺序执行，浏览器会在任务之间渲染</li>
 <li>微任务会顺序执行，执行时机是在每个回调之后并且期间没有其它 JavaScript 在执行并且必须是在每个任务结束之前</li>
