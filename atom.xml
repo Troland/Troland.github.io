@@ -319,34 +319,6 @@
   </entry>
   
   <entry>
-    <title>ES6碎碎念经</title>
-    <link href="http://yoursite.com/2017/10/13/ES6%E7%A2%8E%E7%A2%8E%E5%BF%B5%E7%BB%8F/"/>
-    <id>http://yoursite.com/2017/10/13/ES6碎碎念经/</id>
-    <published>2017-10-13T14:31:46.000Z</published>
-    <updated>2017-10-14T07:48:22.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>使用<em>ES6</em>好些时间了, 下面是自己的一些使用心得:</p><h2 id="let与const"><a href="#let与const" class="headerlink" title="let与const"></a>let与const</h2><p>隐蔽死区</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">function bar(x = y, y = 2) &#123;</div><div class="line">  return [x, y]</div><div class="line">&#125;</div><div class="line"></div><div class="line">bar() // 报错</div></pre></td></tr></table></figure><p><code>x</code>默认值等于另一个参数<code>y</code>， <code>y</code>还没声明，属于死区.</p><p>ES6支付宝临时性死区和<code>let</code>, <code>const</code>语句不出现变量提升，主要是为了减少运行时错误，防止在变量声明前就使用这个变量。</p><p>不能在函数内部重新声明参数。</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">function func(arg) &#123;</div><div class="line">let args; // 报错</div><div class="line">&#125;</div><div class="line"></div><div class="line">function func(arg) &#123;</div><div class="line">&#123;</div><div class="line">let arg; // 不报错</div><div class="line">&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure><h3 id="块级作用域"><a href="#块级作用域" class="headerlink" title="块级作用域"></a>块级作用域</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">function f1() &#123;</div><div class="line">let n = 5;</div><div class="line">if (true) &#123;</div><div class="line">let n = 10;</div><div class="line">&#125;</div><div class="line">console.log(n); // 5</div><div class="line">&#125;</div></pre></td></tr></table></figure><p>以上代码表示外层代码块不受内层代码块的影响。<br>ES6 允许块级作用域任意嵌套。<br>块级作用域的出现，使得广泛使用的立即执行函数表达式（IIFE）不再必要。</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">(function () &#123;</div><div class="line">var tmp = ...;</div><div class="line">&#125;)();</div><div class="line"></div><div class="line">// 块级作用域</div><div class="line">&#123;</div><div class="line">  let tmp = ...;</div><div class="line">  ...</div><div class="line">&#125;</div></pre></td></tr></table></figure><h3 id="块级作用域与函数声明"><a href="#块级作用域与函数声明" class="headerlink" title="块级作用域与函数声明"></a>块级作用域与函数声明</h3><p>为了兼容老代码函数声明。浏览器实现可以不遵守块级作用域内声明的函数类似于<code>let</code>的规定。</p><ul><li>允许在块级作用域内声明函数</li><li>函数声明类似于<code>var</code>,即会提升到全局作用域或函数作用域的头部</li><li>同时，函数声明还会提升到所在块级作用域的头部</li></ul><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">// 浏览器的 ES6 环境</div><div class="line">function f() &#123; console.log(&apos;I am outside!&apos;); &#125;</div><div class="line"></div><div class="line">(function () &#123;</div><div class="line">  if (false) &#123;</div><div class="line">    // 重复声明一次函数f</div><div class="line">    function f() &#123; console.log(&apos;I am inside!&apos;); &#125;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  f();</div><div class="line">&#125;());</div><div class="line">// Uncaught TypeError: f is not a function</div></pre></td></tr></table></figure><p>实际运行:</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">// 浏览器的 ES6 环境</div><div class="line">function f() &#123; console.log(&apos;I am outside!&apos;); &#125;</div><div class="line">(function () &#123;</div><div class="line">  var f = undefined;</div><div class="line">  if (false) &#123;</div><div class="line">    function f() &#123; console.log(&apos;I am inside!&apos;); &#125;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  f();</div><div class="line">&#125;());</div><div class="line">// Uncaught TypeError: f is not a function</div></pre></td></tr></table></figure><p>考虑到环境导致的行为差异太大，应避免在块级作用域内声明函数。如果确实需要，也应写成函数表达式，而不是函数声明语句。</p><p><code>const</code>只声明不赋值也会报错。</p><h3 id="本质"><a href="#本质" class="headerlink" title="本质"></a>本质</h3><p><code>const</code>实际上保证的，并不是变量的值不得改动，而是变量指向的那个内存不得改动。对于简单类型的数据(数值、字符串、布尔值），值就保存在变量指向的那个内存地址，因此等同于常量。但对于复合类型的数据(对象和数组),变量指向的内存地址，保存的只是一个指针。<code>const</code>仅保证这个指针固定，上面的值却不能够保证。</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">const foo = &#123;&#125;;</div><div class="line"></div><div class="line">// 赋值</div><div class="line">foo.a = 123;</div><div class="line">foo.a // 123</div><div class="line"></div><div class="line">// 将foo指向另一个对象，报错</div><div class="line">foo = &#123;&#125;; // Uncaught TypeError: Assignment to constant variable</div></pre></td></tr></table></figure><p>想将对象冻结使用<code>Object.freeze</code>方法。</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">const foo = Object.freeze(&#123;&#125;);</div><div class="line"></div><div class="line">// 常规模式时，下面一行不起作用；</div><div class="line">// 严格模式时，该行会报错</div><div class="line">foo.prop = 123;</div></pre></td></tr></table></figure><h3 id="顶层对象的属性"><a href="#顶层对象的属性" class="headerlink" title="顶层对象的属性"></a>顶层对象的属性</h3><p><code>var</code>命令和<code>function</code>命令声明的全局变量,依旧是顶层对象的属性,另一方面,<code>let</code>,<code>const</code>,<code>class</code>命令声明的全局变量不属于顶层对象的属性。</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">var a = 1;</div><div class="line">// 如果在Node的REPL环境，可以写成global.a</div><div class="line">// 或者采用通用方法，写成this.a</div><div class="line">window.a // 1</div><div class="line"></div><div class="line">let b = 1;</div><div class="line">window.b // undefined</div></pre></td></tr></table></figure><h3 id="global对象"><a href="#global对象" class="headerlink" title="global对象"></a>global对象</h3><p>ES5的顶层对象，在不同环境里面不一样.</p><ul><li>浏览器是<code>window</code>, 但Node和Web Worker没有<code>window</code></li><li>浏览器和Web Worker里面，<code>self</code>也指向顶层对象,但是Node没有<code>self</code></li><li>Node里面，顶层对象是<code>global</code>,但其它环境都不支持</li></ul><p>同一段代码为了能在各种环境中都取到顶层对象，一般使用<code>this</code>变量。</p><ul><li>全局环境中，<code>this</code>会返回顶层对象, 但Node模块和ES6模块，<code>this</code>返回当前模块</li><li>函数里面的<code>this</code>, 如果函数不是作为对象的方法运行，而是单纯作为函数运行，<code>this</code>会指向顶层对象。但是，严格模式下，这是<code>this</code>会返回<code>undefined</code>。</li><li>不管是严格模式，还是普通模式，new Function(‘return this’)()，总是会返回全局对象。但是，如果浏览器用了CSP（Content Security Policy，内容安全政策），那么eval、new Function这些方法都可能无法使用。</li></ul><p>两种方法可以：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">// 方法一</div><div class="line">(typeof window !== &apos;undefined&apos;</div><div class="line">   ? window</div><div class="line">   : (typeof process === &apos;object&apos; &amp;&amp;</div><div class="line">      typeof require === &apos;function&apos; &amp;&amp;</div><div class="line">      typeof global === &apos;object&apos;)</div><div class="line">     ? global</div><div class="line">     : this);</div><div class="line"></div><div class="line">// 方法二</div><div class="line">var getGlobal = function () &#123;</div><div class="line">  if (typeof self !== &apos;undefined&apos;) &#123; return self; &#125;</div><div class="line">  if (typeof window !== &apos;undefined&apos;) &#123; return window; &#125;</div><div class="line">  if (typeof global !== &apos;undefined&apos;) &#123; return global; &#125;</div><div class="line">  throw new Error(&apos;unable to locate global object&apos;);</div><div class="line">&#125;;</div></pre></td></tr></table></figure><p>有一个提案引入<code>global</code>作为顶层对象，这样所有环境下<code>global</code>都存在。<br><a href="https://github.com/ljharb/System.global" target="_blank" rel="external">system.global</a>模拟了这个提案可以在所有环境中拿到<code>global</code>.</p><h2 id="字符串扩展"><a href="#字符串扩展" class="headerlink" title="字符串扩展"></a>字符串扩展</h2><h2 id="对象扩展"><a href="#对象扩展" class="headerlink" title="对象扩展"></a>对象扩展</h2><p>Object.assign(target, source1, source2)只会将源对象的枚举的属性拷贝到目标对象上。只拷贝源对象自身属性，不拷贝不可枚举属性。</p><p>Symbol属性也会被Object.assign拷贝。</p><p>尽量使用<code>Object.keys()</code>来循环对象自身的属性。</p><p><code>Object.getPrototypeOf()</code>获取对象的原型对象。<br><code>Object.setPrototypeOf()</code>设置对象的原型对象。</p><p>…用于取出参数对象的所有可遍历属性，拷贝到当前对象之中。</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">let z = &#123; a: 3, b: 4 &#125;;</div><div class="line">let n = &#123; ...z &#125;;</div><div class="line">n // &#123; a: 3, b: 4 &#125;</div></pre></td></tr></table></figure><h2 id="关于函数"><a href="#关于函数" class="headerlink" title="关于函数"></a>关于函数</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">function add() &#123;&#125;</div></pre></td></tr></table></figure><p>以上函数的长度是多少，一般情况下<code>add.length</code>为函数的参数个数但是如果函数的参数是<code>rest</code>呢？<br><code>rest</code>参数是不计入函数的<code>length</code>属性里面的。并且<strong>rest</strong>参数之后不能再有其它参数，但之前可以有其它参数。<br>你可以在<a href="https://babeljs.io/repl/" target="_blank" rel="external">Babel转换器官网</a>上进行编码。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">(function(a) &#123;&#125;).length  // 1</div><div class="line">(function(...a) &#123;&#125;).length  // 0</div><div class="line">(function(a, ...b) &#123;&#125;).length  // 1</div></pre></td></tr></table></figure></p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;使用&lt;em&gt;ES6&lt;/em&gt;好些时间了, 下面是自己的一些使用心得:&lt;/p&gt;
-&lt;h2 id=&quot;let与const&quot;&gt;&lt;a href=&quot;#let与const&quot; class=&quot;headerlink&quot; title=&quot;let与const&quot;&gt;&lt;/a&gt;let与const&lt;/h2&gt;&lt;p&gt;
-      
-    
-    </summary>
-    
-      <category term="Tech" scheme="http://yoursite.com/categories/Tech/"/>
-    
-    
-      <category term="ES6" scheme="http://yoursite.com/tags/ES6/"/>
-    
-      <category term="FrontEnd" scheme="http://yoursite.com/tags/FrontEnd/"/>
-    
-  </entry>
-  
-  <entry>
     <title>生活的意义</title>
     <link href="http://yoursite.com/2017/10/12/%E7%94%9F%E6%B4%BB%E7%9A%84%E6%84%8F%E4%B9%89/"/>
     <id>http://yoursite.com/2017/10/12/生活的意义/</id>
@@ -403,20 +375,6 @@
       <category term="scrollSpy" scheme="http://yoursite.com/tags/scrollSpy/"/>
     
       <category term="pageYOffset" scheme="http://yoursite.com/tags/pageYOffset/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>去远方</title>
-    <link href="http://yoursite.com/2017/10/02/%E5%8E%BB%E8%BF%9C%E6%96%B9/"/>
-    <id>http://yoursite.com/2017/10/02/去远方/</id>
-    <published>2017-10-01T16:41:37.000Z</published>
-    <updated>2017-10-01T16:41:37.000Z</updated>
-    
-    <summary type="html">
-    
-    </summary>
-    
     
   </entry>
   
@@ -509,34 +467,6 @@
   </entry>
   
   <entry>
-    <title>NodeClub源码解析</title>
-    <link href="http://yoursite.com/2017/08/10/NodeClub%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/"/>
-    <id>http://yoursite.com/2017/08/10/NodeClub源码解析/</id>
-    <published>2017-08-10T13:42:20.000Z</published>
-    <updated>2017-08-10T13:42:20.000Z</updated>
-    
-    <summary type="html">
-    
-    </summary>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>CSS组件库</title>
-    <link href="http://yoursite.com/2017/08/10/CSS%E7%BB%84%E4%BB%B6%E5%BA%93/"/>
-    <id>http://yoursite.com/2017/08/10/CSS组件库/</id>
-    <published>2017-08-10T13:38:17.000Z</published>
-    <updated>2017-08-10T13:38:17.000Z</updated>
-    
-    <summary type="html">
-    
-    </summary>
-    
-    
-  </entry>
-  
-  <entry>
     <title>Token-based-auth</title>
     <link href="http://yoursite.com/2017/08/10/Token-based-auth/"/>
     <id>http://yoursite.com/2017/08/10/Token-based-auth/</id>
@@ -564,34 +494,6 @@
       <category term="jwt" scheme="http://yoursite.com/tags/jwt/"/>
     
       <category term="jsonwebtoken" scheme="http://yoursite.com/tags/jsonwebtoken/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>CSS常用库</title>
-    <link href="http://yoursite.com/2017/08/10/CSS%E5%B8%B8%E7%94%A8%E5%BA%93/"/>
-    <id>http://yoursite.com/2017/08/10/CSS常用库/</id>
-    <published>2017-08-10T13:35:14.000Z</published>
-    <updated>2017-09-10T09:05:04.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>input的line-height样式:</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">.input &#123;</div><div class="line">  width: 100px;</div><div class="line">  line-height: 1.8;</div><div class="line">  font-size: 18px;</div><div class="line">  box-sizing: border-box;</div><div class="line">  padding: 5px;</div><div class="line">  border: 1px solid #f00;</div><div class="line">  vertical-align: middle;</div><div class="line">&#125;</div></pre></td></tr></table></figure><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">.input &#123;</div><div class="line">  height: 30px;</div><div class="line">  line-height: 30px;</div><div class="line">  padding: 0 10px;</div><div class="line">  border: 1px solid #f00;</div><div class="line">  vertical-align: middle;</div><div class="line">&#125;</div></pre></td></tr></table></figure><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">input &#123;</div><div class="line">  -webkit-appearance: none;</div><div class="line">  -moz-appearance: none;</div><div class="line">  appearance: none;</div><div class="line">  background-color: #fff;</div><div class="line">  background-image: none;</div><div class="line">  border-radius: 4px;</div><div class="line">  border: 1px solid #bfcbd9;</div><div class="line">  box-sizing: border-box;</div><div class="line">  color: #1f2d3d;</div><div class="line">  display: inline-block;</div><div class="line">  font-size: inherit;</div><div class="line">  height: 36px;</div><div class="line">  line-height: 1;</div><div class="line">  outline: none;</div><div class="line">  padding: 3px 10px;</div><div class="line">  transition: border-color .2s cubic-bezier(.645,.045,.355,1);</div><div class="line">  width: 100%;</div><div class="line">  vertical-align: middle;</div><div class="line">&#125;</div></pre></td></tr></table></figure><p><strong><code>vertical-align: middle;</code>是当元素和其它内联元素比如button等在一个div的时候可以垂直居中对齐</strong><br>这样输入文字居中。</p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;input的line-height样式:&lt;/p&gt;
-&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;
-      
-    
-    </summary>
-    
-      <category term="Tech" scheme="http://yoursite.com/categories/Tech/"/>
-    
-      <category term="FrontEnd" scheme="http://yoursite.com/categories/Tech/FrontEnd/"/>
-    
-    
-      <category term="css" scheme="http://yoursite.com/tags/css/"/>
     
   </entry>
   
@@ -633,156 +535,6 @@
   </entry>
   
   <entry>
-    <title>二维码登录</title>
-    <link href="http://yoursite.com/2017/07/21/%E4%BA%8C%E7%BB%B4%E7%A0%81%E7%99%BB%E5%BD%95/"/>
-    <id>http://yoursite.com/2017/07/21/二维码登录/</id>
-    <published>2017-07-21T01:21:16.000Z</published>
-    <updated>2017-07-21T01:21:16.000Z</updated>
-    
-    <summary type="html">
-    
-    </summary>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>常用CSS3详解</title>
-    <link href="http://yoursite.com/2017/06/18/%E5%B8%B8%E7%94%A8CSS3%E8%AF%A6%E8%A7%A3/"/>
-    <id>http://yoursite.com/2017/06/18/常用CSS3详解/</id>
-    <published>2017-06-18T15:24:15.000Z</published>
-    <updated>2017-11-15T12:50:18.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>最近在整理CSS3的属性的原理，特意分享一下个人的一些理解。</p><h2 id="transform-origin"><a href="#transform-origin" class="headerlink" title="transform-origin"></a>transform-origin</h2><p><code>transform-origin</code>是改变一个元素的变形的原点通常是和<code>transform</code>一起使用。<br><a href="https://developer.mozilla.org/zh-CN/docs/Web/CSS/transform-origin" target="_blank" rel="external">transform-origin</a> MDN上说明:</p><blockquote><p>transform-origin CSS属性让你更改一个元素变形的原点。例如，rotate()的transform-origin 是旋转的中心点 (这个属性的应用原理是先用这个属性的负值translate该元素，进行变形，然后再用这个属性的值把元素translate回去)。</p></blockquote><p>假设有以下代码:</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">.grid &#123;</div><div class="line"> transform: rotate(30deg);</div><div class="line"> transform-origin: 70% 50%;</div><div class="line">&#125;</div></pre></td></tr></table></figure><p><code>transform-origin</code>属性的默认值是<code>50% 50%</code>。等于是<strong>放置的中心点水平移动到70%移动了20%</strong>,为了保持旋转的角度仍旧为30deg,这个时候元素必须往上移动，否则那个旋转的角度将会变大。</p><p>如下图所示：<br><img src="/images/css-transform-origin.png" alt=""></p><p>可以玩一下<a href="http://www.w3school.com.cn/example/css3/demo_css3_transform-origin.html" target="_blank" rel="external">w3Ctransform-origin演示地址</a></p><h2 id="webkit-box"><a href="#webkit-box" class="headerlink" title="webkit-box"></a>webkit-box</h2>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;最近在整理CSS3的属性的原理，特意分享一下个人的一些理解。&lt;/p&gt;
-&lt;h2 id=&quot;transform-origin&quot;&gt;&lt;a href=&quot;#transform-origin&quot; class=&quot;headerlink&quot; title=&quot;transform-origin&quot;&gt;&lt;/a&gt;
-      
-    
-    </summary>
-    
-      <category term="Tech" scheme="http://yoursite.com/categories/Tech/"/>
-    
-      <category term="FrontEnd" scheme="http://yoursite.com/categories/Tech/FrontEnd/"/>
-    
-    
-      <category term="css3" scheme="http://yoursite.com/tags/css3/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Nodejs碎碎念</title>
-    <link href="http://yoursite.com/2017/06/08/Nodejs%E7%A2%8E%E7%A2%8E%E5%BF%B5/"/>
-    <id>http://yoursite.com/2017/06/08/Nodejs碎碎念/</id>
-    <published>2017-06-08T14:21:01.000Z</published>
-    <updated>2017-10-16T15:06:35.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>记录Nodejs使用中的问题与解决方案。</p><h2 id="模块"><a href="#模块" class="headerlink" title="模块"></a>模块</h2><p>exports只是module.exports的引用</p><h2 id="Buffer类"><a href="#Buffer类" class="headerlink" title="Buffer类"></a>Buffer类</h2><p><strong>大小固定不变</strong>。</p><p>当需要保存非<em>utf-8</em>字符串,2进制等其他格式的时候，就必须得使用。比如最近有使用过微信SDK上传图片并通过微信返回的<code>serverID即媒体id</code>来把微信上的图片下载下来。返回数据即为<code>Buffer</code>对象。</p><h2 id="Event-loop"><a href="#Event-loop" class="headerlink" title="Event loop"></a>Event loop</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">function test() &#123;</div><div class="line">  process.nextTick(() =&gt; test());</div><div class="line">&#125;</div></pre></td></tr></table></figure><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">function test() &#123;</div><div class="line">  setTimeout(() =&gt; test(), 0);</div><div class="line">&#125;</div></pre></td></tr></table></figure><p><strong>关于高并发</strong> nodejs是通过事件循环来挨个抽取事件队列中的一个个<strong>Task</strong>来执行，来获得高并发。</p><h2 id="进程，子进程"><a href="#进程，子进程" class="headerlink" title="进程，子进程"></a>进程，子进程</h2><p><strong>IPC</strong>进程间通讯技术</p><h2 id="Cluster"><a href="#Cluster" class="headerlink" title="Cluster"></a>Cluster</h2><p>Node.js利用多核的办法</p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;记录Nodejs使用中的问题与解决方案。&lt;/p&gt;
-&lt;h2 id=&quot;模块&quot;&gt;&lt;a href=&quot;#模块&quot; class=&quot;headerlink&quot; title=&quot;模块&quot;&gt;&lt;/a&gt;模块&lt;/h2&gt;&lt;p&gt;exports只是module.exports的引用&lt;/p&gt;
-&lt;h2 id=&quot;Buf
-      
-    
-    </summary>
-    
-      <category term="Tech" scheme="http://yoursite.com/categories/Tech/"/>
-    
-    
-      <category term="Nodejs" scheme="http://yoursite.com/tags/Nodejs/"/>
-    
-      <category term="Buffer" scheme="http://yoursite.com/tags/Buffer/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Session与Cookie小结</title>
-    <link href="http://yoursite.com/2017/05/20/Session%E4%B8%8ECookie%E5%B0%8F%E7%BB%93/"/>
-    <id>http://yoursite.com/2017/05/20/Session与Cookie小结/</id>
-    <published>2017-05-20T03:57:05.000Z</published>
-    <updated>2017-08-10T13:43:33.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>最近在学session与cookie相关的内容，有以下几点疑点：</p><ul><li>Session存储在哪？</li><li>记住密码功能及相关的bug</li><li>Session持久化</li><li>如果在cookie中保存那个登录信息应该保存些信息？</li></ul><p>当为检查是否已经登录是通过检查<code>req.session</code>还是通过<code>req.cookies[&#39;isLogged&#39;]</code>,这两者有区别吗？过期时间都是一致的吗？</p><p>登录流程:</p><ul><li>登录系统，填写用户名和密码，后端检测用户名和密码，成功则设置一个登录的cookie</li><li>这个sessid标识符和token应该是随机的值，且都在表中，就应该那个数据库表tokens应该是一个sessid标识符对应一个token吧，然后这个token应该是个哈希值</li><li><p>最后当未从登录页登录的用户并且有一个登录的cookie的时候:</p><ul><li>首先判断那个sessionid存在并且从表中查找到这个sessid对应的hash了的token，则判断为认证通过的用户，然后再重新分配一个sessid和token覆盖掉这条记录，并且生成一个新的登录cookie写到客户端上</li><li>如果sessid存在但token不匹配，则认为被攻击了，然后删除这个session对应的cookie全部删除</li><li>如果sessid和用户名都不存在则忽略login cookie返回到登录页面</li></ul><p>但是这是有并发的问题即:<br>当用户的两个tab同时打开的时候，这个前一个tab会更新token,然后后一个tab由于去比较token导致token不匹配，因为前面的tab已经更新过了，从而导致被认为是被伪造的攻击而退出到登录界面。</p><p>创建用户和登录的时候要加密那个密码，当登录的时候，</p></li></ul><h2 id="基于Cookie认证"><a href="#基于Cookie认证" class="headerlink" title="基于Cookie认证"></a>基于Cookie认证</h2><p>步骤如下:<br>-</p><h2 id="基于Token认证"><a href="#基于Token认证" class="headerlink" title="基于Token认证"></a>基于Token认证</h2>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;最近在学session与cookie相关的内容，有以下几点疑点：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Session存储在哪？&lt;/li&gt;
-&lt;li&gt;记住密码功能及相关的bug&lt;/li&gt;
-&lt;li&gt;Session持久化&lt;/li&gt;
-&lt;li&gt;如果在cookie中保存那个登录信息应该保存些信息？
-      
-    
-    </summary>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>移动端开发相关</title>
-    <link href="http://yoursite.com/2017/03/14/%E7%A7%BB%E5%8A%A8%E7%AB%AF%E5%BC%80%E5%8F%91%E7%9B%B8%E5%85%B3/"/>
-    <id>http://yoursite.com/2017/03/14/移动端开发相关/</id>
-    <published>2017-03-14T14:51:15.000Z</published>
-    <updated>2017-11-15T13:13:20.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>在做移动开发的过程中难免会遇到一些奇奇怪怪的问题，在此罗列如下:</p><h2 id="1像素问题"><a href="#1像素问题" class="headerlink" title="1像素问题"></a>1像素问题</h2><p>这是亭</p><h2 id="iOS中键盘自动大写"><a href="#iOS中键盘自动大写" class="headerlink" title="iOS中键盘自动大写"></a>iOS中键盘自动大写</h2><p>在input中写上<code>autocapitalize=&quot;off&quot;</code>即可</p><h2 id="iOS中彻底阻止用户新窗口中打开页面"><a href="#iOS中彻底阻止用户新窗口中打开页面" class="headerlink" title="iOS中彻底阻止用户新窗口中打开页面"></a>iOS中彻底阻止用户新窗口中打开页面</h2><p>在A标签中使用<code>-webkit-touch-callout:none</code>。</p><h2 id="iOS中禁止用户保存图片"><a href="#iOS中禁止用户保存图片" class="headerlink" title="iOS中禁止用户保存图片"></a>iOS中禁止用户保存图片</h2><p>img标签上写<code>-webkit-touch-callout:none</code>。</p><h2 id="iOS禁止用户选中文字"><a href="#iOS禁止用户选中文字" class="headerlink" title="iOS禁止用户选中文字"></a>iOS禁止用户选中文字</h2><p><code>-webkit-user-select:none</code></p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;在做移动开发的过程中难免会遇到一些奇奇怪怪的问题，在此罗列如下:&lt;/p&gt;
-&lt;h2 id=&quot;1像素问题&quot;&gt;&lt;a href=&quot;#1像素问题&quot; class=&quot;headerlink&quot; title=&quot;1像素问题&quot;&gt;&lt;/a&gt;1像素问题&lt;/h2&gt;&lt;p&gt;这是亭&lt;/p&gt;
-&lt;h2 id=&quot;iO
-      
-    
-    </summary>
-    
-      <category term="Tech" scheme="http://yoursite.com/categories/Tech/"/>
-    
-      <category term="FrontEnd" scheme="http://yoursite.com/categories/Tech/FrontEnd/"/>
-    
-    
-      <category term="Mobile" scheme="http://yoursite.com/tags/Mobile/"/>
-    
-      <category term="1像素" scheme="http://yoursite.com/tags/1%E5%83%8F%E7%B4%A0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>React源码解读</title>
-    <link href="http://yoursite.com/2017/03/06/React%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/"/>
-    <id>http://yoursite.com/2017/03/06/React源码解读/</id>
-    <published>2017-03-05T16:45:02.000Z</published>
-    <updated>2017-10-12T01:48:18.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>React源码</p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;React源码&lt;/p&gt;
-
-      
-    
-    </summary>
-    
-    
-  </entry>
-  
-  <entry>
     <title>lib-flexible源码解读及实战</title>
     <link href="http://yoursite.com/2016/12/30/lib-flexible%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/"/>
     <id>http://yoursite.com/2016/12/30/lib-flexible源码解读/</id>
@@ -808,34 +560,6 @@
       <category term="FrontEnd" scheme="http://yoursite.com/tags/FrontEnd/"/>
     
       <category term="Mobile" scheme="http://yoursite.com/tags/Mobile/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Gulp work flow</title>
-    <link href="http://yoursite.com/2016/12/05/Gulp-work-flow/"/>
-    <id>http://yoursite.com/2016/12/05/Gulp-work-flow/</id>
-    <published>2016-12-05T01:18:08.000Z</published>
-    <updated>2016-12-08T07:27:47.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>关于前端自动化的文章已经有很多，最近，我一直在做这个前端的工程化，说简单一点就是把现有的插件进行整合，从而形成自己的工具集，偶也只是站在巨人的肩膀上^-^.</p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;关于前端自动化的文章已经有很多，最近，我一直在做这个前端的工程化，说简单一点就是把现有的插件进行整合，从而形成自己的工具集，偶也只是站在巨人的肩膀上^-^.&lt;/p&gt;
-
-      
-    
-    </summary>
-    
-      <category term="Tech" scheme="http://yoursite.com/categories/Tech/"/>
-    
-    
-      <category term="FrontEnd" scheme="http://yoursite.com/tags/FrontEnd/"/>
-    
-      <category term="automate" scheme="http://yoursite.com/tags/automate/"/>
     
   </entry>
   
