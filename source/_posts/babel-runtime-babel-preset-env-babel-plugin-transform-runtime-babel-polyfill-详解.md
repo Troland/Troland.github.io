@@ -474,8 +474,7 @@ npm i babel-runtime
 - polyfill
 
   默认 true，是否允许让内置的诸如`Promise`，`Set`，`Map`使用不会污染全局作用域的兼容插件。
-  
-    
+
 - regenerator
   
   默认为 true，是否设置生成器函数是否使用再生器运行时插件来避免污染全局作用域。
@@ -489,15 +488,15 @@ npm i babel-runtime
   默认为 false。当启用的意思即当使用工具函数的时候不再引用`core-js`中的兼容插件。
   
 - useESModules*
- 
+
   默认 false，当启用的时候转换插件就不会使用经过 **@babel/plugin-transform-modules-commonjs** 处理的工具函数。这样有利于为诸如 webpack 的模块构建系统减少构建包的大小，因为 webpack 不需要保存 commonjs 的语法。
   
 ## babel-plugin-transform-runtime，babel-preset-env，babel-polyfill 的使用
-  
+
   这三个插件是如何配合的？这里主要是因为 Babel 7 和 Babel 6，会造成一些区别，分情况来说明吧。
-  
+
   举个例子吧，目录结构如下：
-  
+
   ```
   |-----build
   |      |
@@ -510,9 +509,9 @@ npm i babel-runtime
   |
   |-----webpack.config.js
   ```
-  
+
   执行如下命令
-  
+
   ```
   mkdir babel-learn
   
@@ -522,7 +521,7 @@ npm i babel-runtime
   
   npm i @babel/polyfill @babel/runtime
   ```
-  
+
   - Babel 7
 
     babel-preset-env 需要和 babel-polyfill 配合使用。例如
@@ -1304,21 +1303,21 @@ npm i babel-runtime
     ...还有其它
     ```
   ## 总结
-  
+
   **这里有一个非常重要的问题就是关于transform-runtime[官方文档](https://babeljs.io/docs/plugins/transform-runtime/#core-js-aliasing)上写的关于有些方法必须使用 babel-polyfill 中的方法。**
-  
+
   **那么这样导致的结果就是如果是在 Babel 6 中的时候当在源文件中写上**"foobar".includes("foo")**就必须写上_import "babel-polyfill";_。**
-  
+
   **但是 Babel 7 就不需要在源文件中写`_import "@babel/polyfill";_`会智能判断是否需要去引用这个`includes`的 polyfill。**
-  
+
   当`test.js`中有**import "babel-polyfill";**的时候，Babel 6 版本的**"useBuiltIns": true**即是 Babel 7 的**"useBuiltIns": "entry"**。
-  
+
   在 Babel 7 中即使是源文件中不写**import "@babel/polyfill";**当设置**"useBuiltIns": "usage"**会根据情况输出**"@babel/polyfill"**对应兼容插件的输出。
-  
+
   安装`babel-polyfill`。
-  
+
   当是 Babel 7 的时候使用 .babelrc 配置建议如下：
-  
+
   ```
   {
     "plugins": [
@@ -1338,29 +1337,27 @@ npm i babel-runtime
   }
   ```
   Babel 6
-  
+
   如果有使用 babel-polyfill。
-  
+
   ```
   {
     "plugins": [
         "transform-runtime"
     ],
     "presets": [
-        [
-        "babel-preset-env",
-        {
-            "targets": {
-                "browsers": ["last 2 versions", "safari 7"]
-            },
-            "useBuiltIns": true,
+        ["env",{
+        	"targets": {
+        		"browsers": ["last 2 versions", "safari 7"]
+        	},
+        	"useBuiltIns": true,
         }
       ]
     ],
   }
   ```
   Babel 6 webpack 中的配置：
-  
+
   ```
   const path = require('path');
 
@@ -1386,7 +1383,7 @@ npm i babel-runtime
   };
   ```
   Babel 7 webpack 配置：
-  
+
   ```
   const path = require('path');
 
